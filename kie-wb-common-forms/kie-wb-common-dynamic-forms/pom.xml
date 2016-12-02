@@ -19,6 +19,7 @@
         <module>kie-wb-common-dynamic-forms-api</module>
         <module>kie-wb-common-dynamic-forms-backend</module>
         <module>kie-wb-common-dynamic-forms-client</module>
+        <module>POC</module>
     </modules>
 
 </project>
