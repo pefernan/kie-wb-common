@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.Modal;
-import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldLayoutComponent;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.editor.client.editor.FormEditorHelper;
 import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorContextRequest;

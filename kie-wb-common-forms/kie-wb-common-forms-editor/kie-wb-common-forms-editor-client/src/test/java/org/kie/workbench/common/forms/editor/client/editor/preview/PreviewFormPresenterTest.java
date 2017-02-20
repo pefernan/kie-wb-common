@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
+import org.kie.workbench.common.forms.fields.test.TestFieldManager;
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -49,7 +50,7 @@ public class PreviewFormPresenterTest extends TestCase {
 
     @Before
     public void init() {
-        presenter = new PreviewFormPresenter( view );
+        presenter = new PreviewFormPresenter( view, new TestFieldManager());
         when( form.getId() ).thenReturn( "randomId" );
         when( context.getAvailableForms() ).thenAnswer( new Answer<Map<String, FormDefinition>>() {
             @Override

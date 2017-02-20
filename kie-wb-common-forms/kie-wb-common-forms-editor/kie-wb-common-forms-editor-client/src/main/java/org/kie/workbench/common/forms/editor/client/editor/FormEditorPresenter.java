@@ -25,10 +25,12 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldLayoutComponent;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
+import org.kie.workbench.common.forms.editor.client.editor.preview.PreviewFormPresenter;
 import org.kie.workbench.common.forms.editor.client.editor.rendering.EditorFieldLayoutComponent;
 import org.kie.workbench.common.forms.editor.client.resources.i18n.FormEditorConstants;
 import org.kie.workbench.common.forms.editor.client.type.FormDefinitionResourceType;
@@ -210,11 +212,11 @@ public class FormEditorPresenter extends KieEditor {
                             fileNameValidator )
                 .addDelete( versionRecordManager.getPathToLatest() )
                 .addNewTopLevelMenu( versionRecordManager.buildMenu() )
-                /*.addCommand( "PREVIEW",
+                .addCommand( "PREVIEW",
                              () -> {
                                  synchronizeFormLayout();
-                                 IOC.getBeanManager().lookupBean( PreviewFormPresenter.class ).newInstance().preview( getRenderingContext() );
-                             } )*/
+                                 IOC.getBeanManager().lookupBean(PreviewFormPresenter.class ).newInstance().preview(getRenderingContext() );
+                             } )
                 .build();
     }
 
@@ -259,7 +261,7 @@ public class FormEditorPresenter extends KieEditor {
             return;
         }
 
-        String formId = event.getComponent().getProperties().get( FieldLayoutComponent.FORM_ID );
+        String formId = event.getComponent().getProperties().get(FieldLayoutComponent.FORM_ID );
 
         if ( editorContext.getFormDefinition().getId().equals( formId ) ) {
             String fieldId = event.getComponent().getProperties().get( FieldLayoutComponent.FIELD_ID );

@@ -26,11 +26,12 @@ import org.jboss.errai.common.client.api.Assert;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.forms.crud.client.component.formDisplay.IsFormView;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldLayoutComponent;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldRenderer;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.renderers.relations.subform.widget.SubFormWidget;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.dynamic.client.init.FormHandlerGeneratorManager;
-import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
-import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.subform.widget.SubFormWidget;
+
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContextGeneratorService;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
@@ -50,7 +51,7 @@ public class DynamicFormRenderer implements IsWidget, IsFormView {
         void render( FormRenderingContext context );
         void bind();
 
-        FieldLayoutComponent getFieldLayoutComponentForField( FieldDefinition field );
+        FieldLayoutComponent getFieldLayoutComponentForField(FieldDefinition field );
 
         void clear();
     }

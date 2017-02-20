@@ -52,6 +52,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-data-binding</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-project-api</artifactId>
     </dependency>
@@ -155,6 +160,16 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-dynamic-forms-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-adf-base</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-adf-engine-api</artifactId>
     </dependency>
 
     <!-- Test -->

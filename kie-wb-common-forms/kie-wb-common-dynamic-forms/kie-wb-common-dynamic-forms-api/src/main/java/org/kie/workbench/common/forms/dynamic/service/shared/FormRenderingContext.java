@@ -19,11 +19,15 @@ package org.kie.workbench.common.forms.dynamic.service.shared;
 import java.util.Map;
 
 import org.kie.workbench.common.forms.model.FormDefinition;
+import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 
 public interface FormRenderingContext<T> {
+
     FormDefinition getRootForm();
 
-    void setRootForm( FormDefinition rootForm );
+    LayoutTemplate getFormLayoutTemplate();
+
+    void setRootForm(FormDefinition rootForm );
 
     void setModel( T model );
 
@@ -40,4 +44,6 @@ public interface FormRenderingContext<T> {
     Map<String, FormDefinition> getAvailableForms();
 
     FormRenderingContext getCopyFor( String formKey, T model );
+
+    FormRenderingContext getCopyFor(LayoutTemplate layoutTemplate);
 }

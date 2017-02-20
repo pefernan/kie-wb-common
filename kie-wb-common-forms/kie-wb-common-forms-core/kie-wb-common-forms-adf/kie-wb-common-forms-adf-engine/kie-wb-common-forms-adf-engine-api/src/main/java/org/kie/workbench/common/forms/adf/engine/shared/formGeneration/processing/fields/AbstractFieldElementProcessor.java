@@ -101,7 +101,7 @@ public abstract class AbstractFieldElementProcessor implements FormElementProces
                 }
             }
 
-            LayoutComponent component = new LayoutComponent("org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent");
+            LayoutComponent component = new LayoutComponent("org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldLayoutComponent");
 
             component.addProperty(FormLayoutComponent.FORM_ID,
                                   context.getFormDefinition().getId());

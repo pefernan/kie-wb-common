@@ -24,7 +24,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldLayoutComponent;
 import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorContextResponse;
 import org.kie.workbench.common.forms.editor.client.editor.rendering.EditorFieldLayoutComponent;
 import org.kie.workbench.common.forms.editor.client.resources.images.FormEditorImageResources;

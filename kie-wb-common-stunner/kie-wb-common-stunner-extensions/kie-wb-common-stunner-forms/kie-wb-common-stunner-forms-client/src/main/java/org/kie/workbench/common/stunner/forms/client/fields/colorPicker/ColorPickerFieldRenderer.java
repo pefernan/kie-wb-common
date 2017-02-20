@@ -20,7 +20,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldRenderer;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.forms.model.ColorPickerFieldDefinition;
 

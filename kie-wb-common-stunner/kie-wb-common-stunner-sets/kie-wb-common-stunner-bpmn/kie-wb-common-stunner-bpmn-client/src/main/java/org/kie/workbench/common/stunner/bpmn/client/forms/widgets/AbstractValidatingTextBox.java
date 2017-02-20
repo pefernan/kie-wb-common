@@ -59,7 +59,7 @@ public abstract class AbstractValidatingTextBox extends TextBox {
                         return;
                     }
                 }
-                // Get new value and validate
+                // Get new value and isValid
                 int charCode = event.getCharCode();
                 String oldValue = me.getValue();
                 String newValue = oldValue.substring(0,

@@ -22,7 +22,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldRenderer;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Assignee;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.AssigneeRow;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.ListBoxValues;

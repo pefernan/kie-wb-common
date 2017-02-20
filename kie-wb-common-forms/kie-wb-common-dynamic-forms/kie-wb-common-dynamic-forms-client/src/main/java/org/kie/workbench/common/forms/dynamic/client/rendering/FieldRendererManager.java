@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldRenderer;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
 @Dependent

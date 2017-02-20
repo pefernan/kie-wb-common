@@ -87,7 +87,7 @@ public class DynamicModelValidator implements ModelValidator<Map<String, Object>
                             return false;
                         }
                     } catch ( IllegalArgumentException ex ) {
-                        // Maybe trying to validate an Annotation which is not a a Validation
+                        // Maybe trying to isValid an Annotation which is not a a Validation
                     }
                 }
             }

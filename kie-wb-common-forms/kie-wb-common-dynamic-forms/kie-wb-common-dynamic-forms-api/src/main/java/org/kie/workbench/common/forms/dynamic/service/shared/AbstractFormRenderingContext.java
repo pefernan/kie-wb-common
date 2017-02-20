@@ -20,13 +20,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kie.workbench.common.forms.model.FormDefinition;
-
+import org.uberfire.commons.validation.PortablePreconditions;
+import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 
 public abstract class AbstractFormRenderingContext<T> implements FormRenderingContext<T> {
 
     protected Map<String, FormDefinition> availableForms = new HashMap<String, FormDefinition>();
 
     protected String rootFormId;
+
+    protected LayoutTemplate template;
 
     protected T model;
 
@@ -37,6 +40,14 @@ public abstract class AbstractFormRenderingContext<T> implements FormRenderingCo
     @Override
     public FormDefinition getRootForm() {
         return availableForms.get( rootFormId );
+    }
+
+    @Override
+    public LayoutTemplate getFormLayoutTemplate() {
+        if ( template != null ) {
+            return template;
+        }
+        return getRootForm().getLayoutTemplate();
     }
 
     @Override
@@ -84,15 +95,32 @@ public abstract class AbstractFormRenderingContext<T> implements FormRenderingCo
 
     @Override
     public FormRenderingContext getCopyFor( String formKey, T model ) {
-        if ( formKey == null || formKey.isEmpty() ) {
-            return null;
-        }
+        PortablePreconditions.checkNotNull("formKey", formKey);
+        PortablePreconditions.checkNotNull("model", model);
+
+        AbstractFormRenderingContext copy = getCopy(availableForms.get( formKey ));
+        copy.model = model;
+        return copy;
+    }
+
+    @Override
+    public FormRenderingContext getCopyFor(LayoutTemplate layoutTemplate) {
+        PortablePreconditions.checkNotNull("layoutTemplate", layoutTemplate);
+
+        AbstractFormRenderingContext copy = getCopy( getRootForm() );
+        copy.model = this.model;
+        copy.template = layoutTemplate;
+        return copy;
+    }
+
+    protected AbstractFormRenderingContext getCopy( FormDefinition form ) {
+        PortablePreconditions.checkNotNull("form", form);
+
         AbstractFormRenderingContext copy = getNewInstance();
-        copy.setRenderMode( renderMode );
-        copy.setRootForm( availableForms.get( formKey ) );
-        copy.setModel( model );
-        copy.availableForms = availableForms;
-        copy.setParentContext( this );
+        copy.rootFormId = form.getId();
+        copy.renderMode = this.renderMode;
+        copy.availableForms = this.availableForms;
+        copy.parentContext = this;
         return copy;
     }
 }

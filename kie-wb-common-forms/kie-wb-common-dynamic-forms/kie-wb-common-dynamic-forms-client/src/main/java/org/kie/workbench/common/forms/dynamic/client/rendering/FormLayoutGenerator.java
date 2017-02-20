@@ -31,8 +31,8 @@ import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.kie.workbench.common.forms.dynamic.client.rendering.fields.FieldLayoutComponent;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
-import org.kie.workbench.common.forms.fields.shared.AbstractFieldDefinition;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.client.api.LayoutDragComponent;
@@ -64,7 +64,7 @@ public class FormLayoutGenerator extends AbstractLayoutGenerator {
         if ( renderingContext == null || renderingContext.getRootForm() == null ) {
             return getLayoutContainer();
         }
-        return build( renderingContext.getRootForm().getLayoutTemplate() );
+        return build( renderingContext.getFormLayoutTemplate() );
     }
 
     @Override
@@ -86,14 +86,20 @@ public class FormLayoutGenerator extends AbstractLayoutGenerator {
 
         LayoutDragComponent dragComponent = instance.select( clazz ).get();
 
-        if ( dragComponent instanceof FieldLayoutComponent ) {
-            FieldLayoutComponent fieldComponent = (FieldLayoutComponent) dragComponent;
+        if ( dragComponent instanceof FormRendererComponent ) {
+            if (dragComponent instanceof FieldLayoutComponent) {
+                FieldLayoutComponent fieldComponent = (FieldLayoutComponent) dragComponent;
 
-            FieldDefinition field = renderingContext.getRootForm().getFieldById( layoutComponent.getProperties().get(
-                    FieldLayoutComponent.FIELD_ID ) );
-            fieldComponent.init( renderingContext, field );
+                FieldDefinition field = renderingContext.getRootForm().getFieldById(layoutComponent.getProperties().get(
+                        FieldLayoutComponent.FIELD_ID));
+                fieldComponent.init(renderingContext,
+                                    field);
 
-            layoutComponents.add( fieldComponent );
+                layoutComponents.add(fieldComponent);
+            } else {
+                FormRendererComponent formRendererComponent = (FormRendererComponent) dragComponent;
+                formRendererComponent.init(renderingContext);
+            }
         }
 
         return dragComponent;
