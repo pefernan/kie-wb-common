@@ -45,22 +45,6 @@ public class TextBoxFieldProvider extends BasicTypeFieldProvider<TextBoxBaseDefi
         registerPropertyType(String.class);
         registerPropertyType(Character.class);
         registerPropertyType(char.class);
-
-// TODO: implement this fieldTypes
-        registerPropertyType(BigDecimal.class);
-        registerPropertyType(BigInteger.class);
-        registerPropertyType(Byte.class);
-        registerPropertyType(byte.class);
-        registerPropertyType(Double.class);
-        registerPropertyType(double.class);
-        registerPropertyType(Float.class);
-        registerPropertyType(float.class);
-        registerPropertyType(Integer.class);
-        registerPropertyType(int.class);
-        registerPropertyType(Long.class);
-        registerPropertyType(long.class);
-        registerPropertyType(Short.class);
-        registerPropertyType(short.class);
     }
 
     @Override
