@@ -14,38 +14,46 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.dynamic.client.rendering.renderers;
+package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.decimalBox;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
-import org.gwtbootstrap3.client.ui.LongBox;
+import org.kie.workbench.common.forms.common.rendering.client.widgets.decimalBox.DecimalBox;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.integerBox.definition.IntegerBoxDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.decimalBox.definition.DecimalBoxFieldDefinition;
 
 @Dependent
-public class IntegerBoxFieldRenderer extends FieldRenderer<IntegerBoxDefinition> {
+public class DecimalBoxFieldRenderer extends FieldRenderer<DecimalBoxFieldDefinition> {
 
-    private LongBox longBox = new LongBox();
+    private DecimalBox decimalBox;
+
+    @Inject
+    public DecimalBoxFieldRenderer(DecimalBox decimalBox) {
+        this.decimalBox = decimalBox;
+    }
 
     @Override
     public String getName() {
-        return "IntegerBox";
+        return "DecimalBox";
     }
 
     @Override
     public void initInputWidget() {
-        longBox = new LongBox();
-        longBox.setId(field.getId() );
-        longBox.setPlaceholder(field.getPlaceHolder() );
-        longBox.setMaxLength(field.getMaxLength() );
-        longBox.setEnabled(!field.getReadOnly() );
+        /*
+        doubleBox = new DoubleBox();
+        doubleBox.setId(field.getId() );
+        doubleBox.setPlaceholder(field.getPlaceHolder() );
+        doubleBox.setMaxLength(field.getMaxLength() );
+        doubleBox.setEnabled(!field.getReadOnly() );
+        */
     }
 
     @Override
     public IsWidget getInputWidget() {
-        return longBox;
+        return decimalBox;
     }
 
     @Override
@@ -55,11 +63,11 @@ public class IntegerBoxFieldRenderer extends FieldRenderer<IntegerBoxDefinition>
 
     @Override
     public String getSupportedCode() {
-        return IntegerBoxDefinition.FIELD_TYPE.getTypeName();
+        return DecimalBoxFieldDefinition.FIELD_TYPE.getTypeName();
     }
 
     @Override
     protected void setReadOnly( boolean readOnly ) {
-        longBox.setEnabled(!readOnly );
+        decimalBox.setEnabled(!readOnly );
     }
 }
