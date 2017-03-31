@@ -79,8 +79,9 @@ public class AdjustFieldDefaultRelationsCommand extends AbstractDataModelCommand
             removeManyToOne();
             removeElementCollection();
 
-        } else if ( getContext().getHelper().isBaseType( field.getClassName() ) ||
-                getContext().getDataModel().isEnum( field.getClassName() ) ) {
+        } else if ( (getContext().getHelper().isBaseType( field.getClassName() ) ||
+                getContext().getDataModel().isEnum( field.getClassName() ))
+                && !field.getClassName().equals("org.kie.appformer.formmodeler.uploads.shared.model.DocumentUpload")) {
 
             //when a java lang type is set relation annotations should be removed.
             removeOneToOne();

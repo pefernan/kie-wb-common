@@ -57,6 +57,7 @@ public class PropertyTypeFactoryImpl implements PropertyTypeFactory {
         baseTypes.add(new PropertyTypeImpl("BigDecimal", BigDecimal.class.getName()));
         baseTypes.add(new PropertyTypeImpl("BigInteger", BigInteger.class.getName()));
 
+        baseTypes.add(new PropertyTypeImpl("DocumentUpload", "org.kie.appformer.formmodeler.uploads.shared.model.DocumentUpload"));
 
         baseTypes.add(new PropertyTypeImpl(NamingUtils.BYTE, NamingUtils.BYTE));
         baseTypes.add(new PropertyTypeImpl(NamingUtils.SHORT, NamingUtils.SHORT));
