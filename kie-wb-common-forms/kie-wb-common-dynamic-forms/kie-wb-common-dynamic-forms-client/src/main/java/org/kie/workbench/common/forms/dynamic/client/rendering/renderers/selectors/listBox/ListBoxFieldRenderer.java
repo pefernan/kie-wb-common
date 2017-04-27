@@ -38,7 +38,7 @@ public class ListBoxFieldRenderer<F extends ListBoxBaseDefinition, O extends Sel
 
     @Override
     public String getName() {
-        return "ListBoxField";
+        return "ListBox";
     }
 
     @Override
