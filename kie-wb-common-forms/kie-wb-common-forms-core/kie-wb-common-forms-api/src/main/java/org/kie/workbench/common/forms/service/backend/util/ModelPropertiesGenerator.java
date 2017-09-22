@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.forms.service.backend.util;
 
+import org.kie.workbench.common.forms.model.BindingType;
 import org.kie.workbench.common.forms.model.ModelProperty;
 import org.kie.workbench.common.forms.model.TypeKind;
 import org.kie.workbench.common.forms.model.impl.ModelPropertyImpl;
@@ -34,6 +35,30 @@ public class ModelPropertiesGenerator {
                                    type,
                                    multiple,
                                    ClassLoader.getSystemClassLoader());
+    }
+
+    public static ModelProperty createModelProperty(String name,
+                                                    String type) {
+
+        return createModelProperty(name,
+                                   type,
+                                   BindingType.SINGLE_VALUE);
+    }
+
+    public static ModelProperty createModelProperty(String name,
+                                                    String type,
+                                                    BindingType bindingType) {
+        return createModelProperty(name,
+                                   type,
+                                   bindingType,
+                                   ClassLoader.getSystemClassLoader());
+    }
+
+    public static ModelProperty createModelProperty(String name,
+                                                    String type,
+                                                    BindingType bindingType,
+                                                    ClassLoader classLoader) {
+
     }
 
     public static ModelProperty createModelProperty(String name,

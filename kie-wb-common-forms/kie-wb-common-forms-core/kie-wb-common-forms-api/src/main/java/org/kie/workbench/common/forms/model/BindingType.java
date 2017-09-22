@@ -16,24 +16,25 @@
 
 package org.kie.workbench.common.forms.model;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
 /**
- * Information about the type of a {@link ModelProperty}
+ * Defines the type of binding of a type
  */
-public interface TypeInfo {
+@Portable
+public enum BindingType {
+    SINGLE_VALUE {
+        @Override
+        public boolean isMultiple() {
+            return false;
+        }
+    },
+    ARRAY,
+    COLLECTION,
+    LIST,
+    SET;
 
-    /**
-     * Retrieves the {@link TypeKind}
-     */
-    TypeKind getType();
-
-    /**
-     * Retrieves the className
-     */
-    String getClassName();
-
-    /**
-     * Retrieves the {@link BindingType}
-     * @return
-     */
-    BindingType getBindingType();
+    public boolean isMultiple() {
+        return true;
+    }
 }

@@ -18,6 +18,7 @@ package org.kie.workbench.common.forms.model.impl;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.workbench.common.forms.model.BindingType;
 import org.kie.workbench.common.forms.model.TypeInfo;
 import org.kie.workbench.common.forms.model.TypeKind;
 
@@ -28,24 +29,24 @@ public class TypeInfoImpl implements TypeInfo {
 
     private String className;
 
-    private boolean multiple = false;
+    private BindingType bindingType;
 
     public TypeInfoImpl(String className) {
         this.className = className;
     }
 
     public TypeInfoImpl(String className,
-                        boolean multiple) {
+                        BindingType bindingType) {
         this.className = className;
-        this.multiple = multiple;
+        this.bindingType = bindingType;
     }
 
     public TypeInfoImpl(@MapsTo("type") TypeKind type,
                         @MapsTo("className") String className,
-                        @MapsTo("multiple") boolean multiple) {
+                        @MapsTo("bindingType") BindingType bindingType) {
         this.type = type;
         this.className = className;
-        this.multiple = multiple;
+        this.bindingType = bindingType;
     }
 
     public TypeKind getType() {
@@ -66,12 +67,12 @@ public class TypeInfoImpl implements TypeInfo {
     }
 
     @Override
-    public boolean isMultiple() {
-        return multiple;
+    public BindingType getBindingType() {
+        return bindingType;
     }
 
-    public void setMultiple(boolean multiple) {
-        this.multiple = multiple;
+    public void setBindingType(BindingType bindingType) {
+        this.bindingType = bindingType;
     }
 
     @Override
@@ -85,7 +86,7 @@ public class TypeInfoImpl implements TypeInfo {
 
         TypeInfoImpl typeInfo = (TypeInfoImpl) o;
 
-        if (multiple != typeInfo.multiple) {
+        if (!bindingType.equals(bindingType)) {
             return false;
         }
         if (type != typeInfo.type) {
@@ -100,7 +101,7 @@ public class TypeInfoImpl implements TypeInfo {
         result = ~~result;
         result = 31 * result + className.hashCode();
         result = ~~result;
-        result = 31 * result + (multiple ? 1 : 0);
+        result = 31 * result + bindingType.hashCode();
         result = ~~result;
         return result;
     }

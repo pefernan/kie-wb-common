@@ -20,13 +20,20 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
+import java.util.TreeSet;
+import java.util.Vector;
 
 public class ModelPropertiesUtil {
 
     private static final List<String> simplePropertyTypes = new ArrayList<>();
 
     private static final List<String> listPropertyTypes = new ArrayList<>();
+
+    private static final List<String> setTypes = new ArrayList<>();
 
     static {
         // Primitive types
@@ -60,8 +67,16 @@ public class ModelPropertiesUtil {
         simplePropertyTypes.add("java.time.OffsetDateTime");
 
         // List types
-        // TODO: Add support to other types
         listPropertyTypes.add(List.class.getName());
+        listPropertyTypes.add(ArrayList.class.getName());
+        listPropertyTypes.add(LinkedList.class.getName());
+        listPropertyTypes.add(Vector.class.getName());
+        listPropertyTypes.add(Stack.class.getName());
+
+        // SetTypes
+        setTypes.add(Set.class.getName());
+        setTypes.add(TreeSet.class.getName());
+
     }
 
     public static void registerBaseType(String baseType) {

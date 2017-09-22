@@ -19,6 +19,7 @@ package org.kie.workbench.common.forms.model.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kie.workbench.common.forms.model.BindingType;
 import org.kie.workbench.common.forms.model.FormModel;
 import org.kie.workbench.common.forms.model.HasFormModelProperties;
 import org.kie.workbench.common.forms.model.ModelProperty;
@@ -63,10 +64,10 @@ public abstract class AbstractFormModel implements FormModel,
     public void addProperty(String name,
                             String className,
                             TypeKind typeKind,
-                            boolean multiple) {
+                            BindingType bindingType) {
         properties.add(new ModelPropertyImpl(name,
                                              new TypeInfoImpl(typeKind,
                                                               className,
-                                                              multiple)));
+                                                              bindingType)));
     }
 }
