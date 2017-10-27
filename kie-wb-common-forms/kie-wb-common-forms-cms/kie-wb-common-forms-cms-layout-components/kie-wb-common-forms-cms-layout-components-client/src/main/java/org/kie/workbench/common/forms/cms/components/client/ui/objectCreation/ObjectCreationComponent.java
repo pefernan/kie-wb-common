@@ -20,27 +20,38 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.forms.cms.components.client.resources.i18n.CMSComponentsConstants;
 import org.kie.workbench.common.forms.cms.components.client.ui.AbstractFormsCMSLayoutComponent;
+import org.kie.workbench.common.forms.cms.components.client.ui.displayer.FormDisplayer;
 import org.kie.workbench.common.forms.cms.components.client.ui.settings.SettingsDisplayer;
+import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.objectCreation.ObjectCreationSettings;
-import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
+import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
 @Dependent
 public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<ObjectCreationSettings, ObjectCreationSettingsReader> {
 
-    private DynamicFormRenderer formRenderer;
+    private FormDisplayer displayer;
+
+    private Caller<RenderingContextGenerator> contextGenerator;
+
+    private FormRenderingContext context;
 
     @Inject
     public ObjectCreationComponent(TranslationService translationService,
                                    SettingsDisplayer settingsDisplayer,
                                    ObjectCreationSettingsReader reader,
-                                   DynamicFormRenderer formRenderer) {
+                                   Caller<RenderingContextGenerator> contextGenerator,
+                                   FormDisplayer displayer) {
         super(translationService,
               settingsDisplayer,
               reader);
-        this.formRenderer = formRenderer;
+        this.contextGenerator = contextGenerator;
+        this.displayer = displayer;
     }
 
     @Override
@@ -50,6 +61,32 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
 
     @Override
     protected IsWidget getWidget() {
-        return formRenderer;
+
+        if (checkSettings()) {
+            contextGenerator.call((RemoteCallback<FormRenderingContext>) contextResponse -> {
+                if (contextResponse != null) {
+                    displayer.setEnabled(true);
+                    context = contextResponse;
+                    displayer.init(context,
+                                   () -> {
+                                   },
+                                   () -> {
+                                   });
+                } else {
+                    displayer.setEnabled(false);
+                }
+            }).generateContext(settings.getOu(),
+                                   settings.getProject(),
+                                   settings.getForm());
+        } else {
+            displayer.setEnabled(false);
+        }
+
+        return ElementWrapperWidget.getWidget(displayer.getElement());
+    }
+
+    @Override
+    protected boolean checkSettings() {
+        return super.checkSettings() && settings.getForm() != null;
     }
 }

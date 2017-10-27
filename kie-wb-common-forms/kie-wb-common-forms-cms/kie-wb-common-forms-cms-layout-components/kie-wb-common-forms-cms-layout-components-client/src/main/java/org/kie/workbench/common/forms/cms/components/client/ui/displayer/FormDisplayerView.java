@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.client;
+package org.kie.workbench.common.forms.cms.components.client.ui.displayer;
 
-import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ui.shared.api.annotations.Bundle;
+import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
+import org.uberfire.client.mvp.UberElement;
 
-@EntryPoint
-@Bundle("resources/i18n/CMSComponentsConstants.properties")
-public class CMSLayoutComponentsEntryPoint {
+public interface FormDisplayerView extends UberElement<FormDisplayerView.Presenter>  {
+
+    interface Presenter {
+
+        DynamicFormRenderer getRenderer();
+
+        void onSubmit();
+
+        void onCancel();
+
+    }
 
 }

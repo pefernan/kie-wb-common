@@ -101,6 +101,16 @@ public class ProvidersHelperService {
         return Collections.EMPTY_LIST;
     }
 
+    public FormDefinition getFormById(String ouId, String projectName, String formId) {
+        Optional<KieProject> projectOptional = getProject(ouId, projectName);
+
+        if(projectOptional.isPresent()) {
+            return formFinderService.findFormById(formId, projectOptional.get().getRootPath());
+        }
+
+        return null;
+    }
+
     private Optional<KieProject> getProject(String ouId, String projectName) {
         Collection<KieProject> projects = getOrganizationalUnitProjects(ouId);
 

@@ -84,5 +84,9 @@ public abstract class AbstractFormsCMSLayoutComponent<SETTINGS extends BasicComp
         return getWidget();
     }
 
+    protected boolean checkSettings() {
+        return settings.getOu() != null && settings.getProject() != null && settings.getDataObject() != null;
+    }
+
     protected abstract IsWidget getWidget();
 }

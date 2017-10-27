@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.client;
+package org.kie.workbench.common.forms.cms.components.service.shared;
 
-import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ui.shared.api.annotations.Bundle;
+import org.jboss.errai.bus.server.annotations.Remote;
+import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
-@EntryPoint
-@Bundle("resources/i18n/CMSComponentsConstants.properties")
-public class CMSLayoutComponentsEntryPoint {
+@Remote
+public interface RenderingContextGenerator {
 
+    FormRenderingContext generateContext(String ouId, String projectName, String formId);
 }

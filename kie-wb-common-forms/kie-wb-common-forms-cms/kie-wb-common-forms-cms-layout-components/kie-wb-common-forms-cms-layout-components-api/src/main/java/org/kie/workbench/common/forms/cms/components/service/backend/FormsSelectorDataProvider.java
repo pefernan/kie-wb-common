@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import org.kie.workbench.common.forms.cms.components.shared.model.BasicComponentSettings;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
@@ -31,6 +32,11 @@ import org.kie.workbench.common.forms.model.FormDefinition;
 public class FormsSelectorDataProvider implements SelectorDataProvider {
 
     private ProvidersHelperService providersHelperService;
+
+    @Inject
+    public FormsSelectorDataProvider(ProvidersHelperService providersHelperService) {
+        this.providersHelperService = providersHelperService;
+    }
 
     @Override
     public String getProviderName() {

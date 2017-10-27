@@ -25,5 +25,7 @@
 
   <inherits name="org.kie.workbench.common.forms.fields.BasicFormFields"/>
 
+  <inherits name="org.kie.workbench.common.forms.cms.components.service.FormsCMSComponentsSharedServices"/>
+
   <source path="shared"/>
 </module>
