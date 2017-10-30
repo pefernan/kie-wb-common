@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.shared.model.objectCreation;
+package org.kie.workbench.common.forms.cms.components.shared.model.objectEdition;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
@@ -29,13 +29,13 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.l
 @Portable
 @Bindable
 @FormDefinition(i18n = @I18nSettings(keyPreffix = "FormLabels"), startElement = "ou")
-public class ObjectCreationSettings extends BasicComponentSettings {
+public class ObjectEditionSettings extends BasicComponentSettings {
 
     @SelectorDataProvider(type = SelectorDataProvider.ProviderType.REMOTE, className = "org.kie.workbench.common.forms.cms.components.service.backend.FormsSelectorDataProvider")
     @FormField(type = ListBoxFieldType.class,
-            labelKey = "creationForm",
-            required = true,
+            labelKey = "editionForm",
             afterElement = "dataObject",
+            required = true,
             settings = {@FieldParam(name = "relatedField", value = "dataObject")})
     private String form;
 

@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.service.shared;
+package org.kie.workbench.common.forms.cms.persistence.shared;
 
 import org.jboss.errai.bus.server.annotations.Remote;
-import org.kie.workbench.common.forms.cms.components.shared.model.crud.CRUDSettings;
-import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
 @Remote
-public interface RenderingContextGenerator {
+public interface PersistenceService {
 
-    FormRenderingContext generateContext(String ouId, String projectName, String formId);
 
-    FormRenderingContext generateContext(CRUDSettings crudSettings);
 }

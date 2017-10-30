@@ -24,15 +24,15 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.l
 public abstract class BasicComponentSettings {
 
     @SelectorDataProvider(type = SelectorDataProvider.ProviderType.REMOTE, className = "org.kie.workbench.common.forms.cms.components.service.backend.OUSelectorDataProvider")
-    @FormField(type = ListBoxFieldType.class)
+    @FormField(type = ListBoxFieldType.class, labelKey = "ou", required = true)
     protected String ou;
 
     @SelectorDataProvider(type = SelectorDataProvider.ProviderType.REMOTE, className = "org.kie.workbench.common.forms.cms.components.service.backend.ProjectSelectorDataProvider")
-    @FormField(type = ListBoxFieldType.class, afterElement = "ou", settings = {@FieldParam(name = "relatedField", value = "ou")})
+    @FormField(type = ListBoxFieldType.class, labelKey = "project", required = true, afterElement = "ou", settings = {@FieldParam(name = "relatedField", value = "ou")})
     protected String project;
 
     @SelectorDataProvider(type = SelectorDataProvider.ProviderType.REMOTE, className = "org.kie.workbench.common.forms.cms.components.service.backend.DOSelectorDataProvider")
-    @FormField(type = ListBoxFieldType.class, afterElement = "project", settings = {@FieldParam(name = "relatedField", value = "project")})
+    @FormField(type = ListBoxFieldType.class, labelKey = "dataObject", required = true, afterElement = "project", settings = {@FieldParam(name = "relatedField", value = "project")})
     protected String dataObject;
 
     public String getOu() {

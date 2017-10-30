@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.forms.cms.components.service.backend.ProvidersHelperService;
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
+import org.kie.workbench.common.forms.cms.components.shared.model.crud.CRUDSettings;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.relations.HasNestedForm;
@@ -58,6 +59,58 @@ public class RenderingContextGeneratorImpl implements RenderingContextGenerator 
                          formDefinition,
                          context);
 
+            return context;
+        }
+
+        return null;
+    }
+
+    @Override
+    public FormRenderingContext generateContext(CRUDSettings crudSettings) {
+        FormDefinition formDefinition = providersHelperService.getFormById(crudSettings.getOu(), crudSettings.getProject(), crudSettings.getCreationForm());
+
+        if(formDefinition != null) {
+            FormRenderingContext context = new MapModelRenderingContext();
+
+            context.setRootForm(formDefinition);
+
+            initAllForms(crudSettings.getOu(),
+                         crudSettings.getProject(),
+                         formDefinition,
+                         context);
+
+            if(!context.getAvailableForms().containsKey(crudSettings.getEditionForm())) {
+                formDefinition = providersHelperService.getFormById(crudSettings.getOu(), crudSettings.getProject(), crudSettings.getCreationForm());
+                if(formDefinition != null) {
+                    context.getAvailableForms().put(formDefinition.getId(), formDefinition);
+                    initAllForms(crudSettings.getOu(),
+                                 crudSettings.getProject(),
+                                 formDefinition,
+                                 context);
+                }
+            }
+
+            if(!context.getAvailableForms().containsKey(crudSettings.getPreviewForm())) {
+                formDefinition = providersHelperService.getFormById(crudSettings.getOu(), crudSettings.getProject(), crudSettings.getCreationForm());
+                if(formDefinition != null) {
+                    context.getAvailableForms().put(formDefinition.getId(), formDefinition);
+                    initAllForms(crudSettings.getOu(),
+                                 crudSettings.getProject(),
+                                 formDefinition,
+                                 context);
+                }
+            }
+
+            if(!context.getAvailableForms().containsKey(crudSettings.getTableForm())) {
+                formDefinition = providersHelperService.getFormById(crudSettings.getOu(), crudSettings.getProject(), crudSettings.getCreationForm());
+                if(formDefinition != null) {
+                    context.getAvailableForms().put(formDefinition.getId(), formDefinition);
+                    initAllForms(crudSettings.getOu(),
+                                 crudSettings.getProject(),
+                                 formDefinition,
+                                 context);
+                }
+            }
             return context;
         }
 

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.client.ui.objectCreation;
+package org.kie.workbench.common.forms.cms.components.client.ui.objectEdition;
+
+import java.util.HashMap;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -29,22 +31,22 @@ import org.kie.workbench.common.forms.cms.components.client.ui.AbstractFormsCMSL
 import org.kie.workbench.common.forms.cms.components.client.ui.displayer.FormDisplayer;
 import org.kie.workbench.common.forms.cms.components.client.ui.settings.SettingsDisplayer;
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
-import org.kie.workbench.common.forms.cms.components.shared.model.objectCreation.ObjectCreationSettings;
+import org.kie.workbench.common.forms.cms.components.shared.model.objectEdition.ObjectEditionSettings;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
 @Dependent
-public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<ObjectCreationSettings, ObjectCreationSettingsReader> {
+public class ObjectEditionComponent extends AbstractFormsCMSLayoutComponent<ObjectEditionSettings, ObjectEditionSettingsReader> {
 
     private Caller<RenderingContextGenerator> contextGenerator;
     private FormDisplayer displayer;
     private FormRenderingContext context;
 
     @Inject
-    public ObjectCreationComponent(TranslationService translationService,
-                                   SettingsDisplayer settingsDisplayer,
-                                   ObjectCreationSettingsReader reader,
-                                   Caller<RenderingContextGenerator> contextGenerator,
-                                   FormDisplayer displayer) {
+    public ObjectEditionComponent(TranslationService translationService,
+                                  SettingsDisplayer settingsDisplayer,
+                                  ObjectEditionSettingsReader reader,
+                                  Caller<RenderingContextGenerator> contextGenerator,
+                                  FormDisplayer displayer) {
         super(translationService,
               settingsDisplayer,
               reader);
@@ -54,7 +56,7 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
 
     @Override
     public String getDragComponentTitle() {
-        return translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentTitle);
+        return translationService.getTranslation(CMSComponentsConstants.ObjectEditionComponentTitle);
     }
 
     @Override
@@ -65,6 +67,7 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
                 if (contextResponse != null) {
                     displayer.setEnabled(true);
                     context = contextResponse;
+                    context.setModel(new HashMap<>());
                     displayer.init(context,
                                    () -> {
                                    },
@@ -74,8 +77,8 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
                     displayer.setEnabled(false);
                 }
             }).generateContext(settings.getOu(),
-                                   settings.getProject(),
-                                   settings.getForm());
+                               settings.getProject(),
+                               settings.getForm());
         } else {
             displayer.setEnabled(false);
         }

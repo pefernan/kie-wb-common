@@ -24,5 +24,11 @@ public interface CMSComponentsConstants {
     String ObjectCreationComponentTitle = "ObjectCreationComponent.title";
 
     @TranslationKey(defaultValue = "")
+    String ObjectEditionComponentTitle = "ObjectEditionComponent.title";
+
+    @TranslationKey(defaultValue = "")
+    String CRUDLayoutComponentTitle = "CRUDLayoutComponent.title";
+
+    @TranslationKey(defaultValue = "")
     String SettingsDisplayerViewImplTitle = "SettingsDisplayerViewImpl.title";
 }
