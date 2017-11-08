@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.client.ui.displayer;
+package org.kie.workbench.common.forms.cms.components.client.ui.report.preview;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Command;
+import org.gwtbootstrap3.client.ui.ModalSize;
 import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
@@ -27,21 +30,13 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKButton;
 
-@Templated
-public class FormDisplayerViewImpl implements IsElement, FormDisplayerView {
+@Dependent
+public class ObjectPreviewViewImpl implements ObjectPreviewView {
 
-    @Inject
-    @DataField("container")
-    private Div container;
-
-    @Inject
-    @DataField("submit-button")
-    private Button submit;
-
-    @Inject
-    @DataField("cancel-button")
-    private Button cancel;
+    private BaseModal modal;
 
     private Presenter presenter;
 
@@ -49,16 +44,23 @@ public class FormDisplayerViewImpl implements IsElement, FormDisplayerView {
     public void init(Presenter presenter) {
         this.presenter = presenter;
 
-        DOMUtil.appendWidgetToElement(container, presenter.getRenderer());
+        modal = new BaseModal();
+        modal.setSize(ModalSize.LARGE);
+
+        modal.setTitle(presenter.getTitle());
+
+        modal.setBody(presenter.getRenderer().asWidget());
+
+        modal.add(new ModalFooterOKButton(() -> presenter.getAcceptCommand().execute()));
     }
 
-    @EventHandler("submit-button")
-    public void onSubmit(@ForEvent("click") Event event) {
-        presenter.onSubmit();
+    @Override
+    public void show() {
+        modal.show();
     }
 
-    @EventHandler("cancel-button")
-    public void onCancel(@ForEvent("click") Event event) {
-        presenter.onCancel();
+    @Override
+    public void hide() {
+        modal.hide();
     }
 }

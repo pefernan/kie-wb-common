@@ -22,9 +22,5 @@
 
   <inherits name="org.kie.workbench.common.forms.dynamic.DynamicFormsAPI"/>
 
-  <inherits name="org.kie.workbench.common.forms.cms.FormsCMSPersistenceApi"/>
-
-  <inherits name="org.kie.workbench.common.forms.cms.service.FormsCMSPersistenceApiShared"/>
-
   <source path="shared"/>
 </module>

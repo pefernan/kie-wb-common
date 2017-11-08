@@ -16,13 +16,18 @@
 
 package org.kie.workbench.common.forms.cms.components.client.ui.objectCreation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
+import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.forms.cms.components.client.resources.i18n.CMSComponentsConstants;
 import org.kie.workbench.common.forms.cms.components.client.ui.AbstractFormsCMSLayoutComponent;
@@ -30,25 +35,28 @@ import org.kie.workbench.common.forms.cms.components.client.ui.displayer.FormDis
 import org.kie.workbench.common.forms.cms.components.client.ui.settings.SettingsDisplayer;
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.objectCreation.ObjectCreationSettings;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
+import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 
 @Dependent
 public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<ObjectCreationSettings, ObjectCreationSettingsReader> {
 
-    private Caller<RenderingContextGenerator> contextGenerator;
     private FormDisplayer displayer;
-    private FormRenderingContext context;
+    private MapModelRenderingContext context;
 
     @Inject
     public ObjectCreationComponent(TranslationService translationService,
                                    SettingsDisplayer settingsDisplayer,
                                    ObjectCreationSettingsReader reader,
                                    Caller<RenderingContextGenerator> contextGenerator,
-                                   FormDisplayer displayer) {
+                                   FormDisplayer displayer,
+                                   PersistenceService persistenceService) {
         super(translationService,
               settingsDisplayer,
-              reader);
-        this.contextGenerator = contextGenerator;
+              reader,
+              persistenceService,
+              contextGenerator);
         this.displayer = displayer;
     }
 
@@ -64,23 +72,41 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
             contextGenerator.call((RemoteCallback<FormRenderingContext>) contextResponse -> {
                 if (contextResponse != null) {
                     displayer.setEnabled(true);
-                    context = contextResponse;
-                    displayer.init(context,
-                                   () -> {
-                                   },
-                                   () -> {
-                                   });
+                    context = (MapModelRenderingContext) contextResponse;
+                    initDisplayer();
                 } else {
                     displayer.setEnabled(false);
                 }
             }).generateContext(settings.getOu(),
-                                   settings.getProject(),
-                                   settings.getForm());
+                               settings.getProject(),
+                               settings.getForm());
         } else {
             displayer.setEnabled(false);
         }
 
         return ElementWrapperWidget.getWidget(displayer.getElement());
+    }
+
+    protected void initDisplayer() {
+        context.setModel(new HashMap<>());
+        displayer.init(context,
+                       () -> {
+                           Map<String, Object> instance;
+
+                           if(context.getModel() instanceof BindableProxy) {
+                               instance = ((BindableProxy<Map<String, Object>>)context.getModel()).deepUnwrap();
+                           } else {
+                               instance = context.getModel();
+                           }
+
+                           this.persistenceService.createInstance(settings.getDataObject(),
+                                                                  instance);
+                           Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                           initDisplayer();
+                       },
+                       () -> {
+                           initDisplayer();
+                       });
     }
 
     @Override

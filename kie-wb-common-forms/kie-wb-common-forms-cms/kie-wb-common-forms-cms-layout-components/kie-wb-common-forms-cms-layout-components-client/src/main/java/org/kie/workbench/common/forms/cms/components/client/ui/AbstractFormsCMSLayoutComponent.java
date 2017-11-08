@@ -20,9 +20,12 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.Modal;
+import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.forms.cms.components.client.ui.settings.SettingsDisplayer;
+import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.BasicComponentSettings;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
 import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
@@ -32,8 +35,9 @@ public abstract class AbstractFormsCMSLayoutComponent<SETTINGS extends BasicComp
                                                                                                                                           HasModalConfiguration {
 
     protected TranslationService translationService;
-
     protected SettingsDisplayer settingsDisplayer;
+    protected Caller<RenderingContextGenerator> contextGenerator;
+    protected PersistenceService persistenceService;
 
     protected READER reader;
 
@@ -41,10 +45,14 @@ public abstract class AbstractFormsCMSLayoutComponent<SETTINGS extends BasicComp
 
     public AbstractFormsCMSLayoutComponent(TranslationService translationService,
                                            SettingsDisplayer settingsDisplayer,
-                                           READER reader) {
+                                           READER reader,
+                                           PersistenceService persistenceService,
+                                           Caller<RenderingContextGenerator> contextGenerator) {
         this.translationService = translationService;
         this.settingsDisplayer = settingsDisplayer;
         this.reader = reader;
+        this.persistenceService = persistenceService;
+        this.contextGenerator = contextGenerator;
     }
 
     @Override

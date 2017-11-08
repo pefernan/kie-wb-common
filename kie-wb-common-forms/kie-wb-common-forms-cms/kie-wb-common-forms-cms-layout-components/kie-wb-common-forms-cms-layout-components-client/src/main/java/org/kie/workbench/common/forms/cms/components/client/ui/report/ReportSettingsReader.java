@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.client.ui.objectEdition;
+package org.kie.workbench.common.forms.cms.components.client.ui.report;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,28 +22,30 @@ import java.util.Map;
 import javax.enterprise.context.Dependent;
 
 import org.kie.workbench.common.forms.cms.components.client.ui.SettingsReader;
-import org.kie.workbench.common.forms.cms.components.shared.model.objectEdition.ObjectEditionSettings;
+import org.kie.workbench.common.forms.cms.components.shared.model.report.ReportSettings;
 
 @Dependent
-public class ObjectEditionSettingsReader extends SettingsReader<ObjectEditionSettings> {
+public class ReportSettingsReader extends SettingsReader<ReportSettings> {
 
-    public static String FORM = "form";
+    public static final String PREVIEW_FORM = "previewForm";
+    public static final String TABLE_FORM = "tableForm";
 
     @Override
-    protected Map<String, String> writeToMap(ObjectEditionSettings settings) {
+    protected Map<String, String> writeToMap(ReportSettings settings) {
         Map<String, String> settingsMap = new HashMap<>();
 
-        settingsMap.put(FORM,
-                        settings.getForm());
+        settingsMap.put(PREVIEW_FORM, settings.getPreviewForm());
+        settingsMap.put(TABLE_FORM, settings.getTableForm());
 
         return settingsMap;
     }
 
     @Override
-    protected ObjectEditionSettings readFromMap(Map<String, String> settingsMap) {
-        ObjectEditionSettings settings = new ObjectEditionSettings();
+    protected ReportSettings readFromMap(Map<String, String> settingsMap) {
+        ReportSettings settings = new ReportSettings();
 
-        settings.setForm(settingsMap.get(FORM));
+        settings.setPreviewForm(settingsMap.get(PREVIEW_FORM));
+        settings.setTableForm(settingsMap.get(TABLE_FORM));
 
         return settings;
     }

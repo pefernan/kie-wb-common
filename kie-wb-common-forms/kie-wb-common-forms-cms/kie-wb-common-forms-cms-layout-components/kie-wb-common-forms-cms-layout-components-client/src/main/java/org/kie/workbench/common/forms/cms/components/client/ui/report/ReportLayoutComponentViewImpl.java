@@ -14,51 +14,38 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.client.ui.displayer;
+package org.kie.workbench.common.forms.cms.components.client.ui.report;
 
 import javax.inject.Inject;
 
-import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
-import org.jboss.errai.common.client.dom.Event;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
-import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.forms.cms.components.client.ui.report.entry.ReportEntry;
 
 @Templated
-public class FormDisplayerViewImpl implements IsElement, FormDisplayerView {
+public class ReportLayoutComponentViewImpl implements IsElement, ReportLayoutComponentView {
 
     @Inject
-    @DataField("container")
-    private Div container;
-
-    @Inject
-    @DataField("submit-button")
-    private Button submit;
-
-    @Inject
-    @DataField("cancel-button")
-    private Button cancel;
+    @DataField
+    private Div content;
 
     private Presenter presenter;
 
     @Override
+    public void clear() {
+        DOMUtil.removeAllChildren(content);
+    }
+
+    @Override
+    public void append(ReportEntry entry) {
+        content.appendChild(entry.getElement());
+    }
+
+    @Override
     public void init(Presenter presenter) {
         this.presenter = presenter;
-
-        DOMUtil.appendWidgetToElement(container, presenter.getRenderer());
-    }
-
-    @EventHandler("submit-button")
-    public void onSubmit(@ForEvent("click") Event event) {
-        presenter.onSubmit();
-    }
-
-    @EventHandler("cancel-button")
-    public void onCancel(@ForEvent("click") Event event) {
-        presenter.onCancel();
     }
 }

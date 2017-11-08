@@ -18,6 +18,8 @@ package org.kie.workbench.common.forms.cms.components.service.shared;
 
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.kie.workbench.common.forms.cms.components.shared.model.crud.CRUDSettings;
+import org.kie.workbench.common.forms.cms.components.shared.model.report.ReportSettings;
+import org.kie.workbench.common.forms.cms.components.shared.model.wizard.WizardSettings;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
 @Remote
@@ -26,4 +28,8 @@ public interface RenderingContextGenerator {
     FormRenderingContext generateContext(String ouId, String projectName, String formId);
 
     FormRenderingContext generateContext(CRUDSettings crudSettings);
+
+    FormRenderingContext generateContext(ReportSettings reportSettings);
+
+    FormRenderingContext generateContext(WizardSettings settings);
 }

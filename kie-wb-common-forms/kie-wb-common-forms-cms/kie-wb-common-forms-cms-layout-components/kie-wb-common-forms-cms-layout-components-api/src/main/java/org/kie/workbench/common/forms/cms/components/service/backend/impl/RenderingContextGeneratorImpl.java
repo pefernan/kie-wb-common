@@ -23,6 +23,8 @@ import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.forms.cms.components.service.backend.ProvidersHelperService;
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.crud.CRUDSettings;
+import org.kie.workbench.common.forms.cms.components.shared.model.report.ReportSettings;
+import org.kie.workbench.common.forms.cms.components.shared.model.wizard.WizardSettings;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.relations.HasNestedForm;
@@ -115,6 +117,55 @@ public class RenderingContextGeneratorImpl implements RenderingContextGenerator 
         }
 
         return null;
+    }
+
+    @Override
+    public FormRenderingContext generateContext(ReportSettings reportSettings) {
+        FormDefinition formDefinition = providersHelperService.getFormById(reportSettings.getOu(), reportSettings.getProject(), reportSettings.getTableForm());
+
+        if(formDefinition != null) {
+            FormRenderingContext context = new MapModelRenderingContext();
+
+            context.setRootForm(formDefinition);
+
+            initAllForms(reportSettings.getOu(),
+                         reportSettings.getProject(),
+                         formDefinition,
+                         context);
+
+            if(!context.getAvailableForms().containsKey(reportSettings.getPreviewForm())) {
+                formDefinition = providersHelperService.getFormById(reportSettings.getOu(), reportSettings.getProject(), reportSettings.getPreviewForm());
+                if(formDefinition != null) {
+                    context.getAvailableForms().put(formDefinition.getId(), formDefinition);
+                    initAllForms(reportSettings.getOu(),
+                                 reportSettings.getProject(),
+                                 formDefinition,
+                                 context);
+                }
+            }
+            return context;
+        }
+        return null;
+    }
+
+    @Override
+    public FormRenderingContext generateContext(WizardSettings settings) {
+
+        MapModelRenderingContext context = new MapModelRenderingContext();
+
+        settings.getSteps().forEach(wizardStep -> {
+            FormDefinition formDefinition = providersHelperService.getFormById(settings.getOu(), settings.getProject(), wizardStep.getForm());
+
+            if(formDefinition != null && !context.getAvailableForms().containsKey(formDefinition.getId())) {
+                context.getAvailableForms().put(formDefinition.getId(), formDefinition);
+                initAllForms(settings.getOu(),
+                             settings.getProject(),
+                             formDefinition,
+                             context);
+            }
+        });
+
+        return context;
     }
 
     protected void initAllForms(String ouId,

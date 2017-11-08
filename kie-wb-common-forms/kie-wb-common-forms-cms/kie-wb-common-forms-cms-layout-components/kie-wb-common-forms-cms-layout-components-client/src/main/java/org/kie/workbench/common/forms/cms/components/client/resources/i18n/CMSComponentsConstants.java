@@ -24,6 +24,9 @@ public interface CMSComponentsConstants {
     String ObjectCreationComponentTitle = "ObjectCreationComponent.title";
 
     @TranslationKey(defaultValue = "")
+    String ObjectCreationComponentConfirmation = "ObjectCreationComponent.confirmation";
+
+    @TranslationKey(defaultValue = "")
     String ObjectEditionComponentTitle = "ObjectEditionComponent.title";
 
     @TranslationKey(defaultValue = "")
@@ -31,4 +34,16 @@ public interface CMSComponentsConstants {
 
     @TranslationKey(defaultValue = "")
     String SettingsDisplayerViewImplTitle = "SettingsDisplayerViewImpl.title";
+
+    @TranslationKey(defaultValue = "")
+    String ReportLayoutComponentTitle = "ReportLayoutComponent.title";
+
+    @TranslationKey(defaultValue = "")
+    String WizardFormComponentTitle = "WizardFormComponent.title";
+
+    @TranslationKey(defaultValue = "")
+    String WizardFormViewImplStep = "WizardFormViewImpl.step";
+
+    @TranslationKey(defaultValue = "")
+    String ObjectPreviewTitle = "ObjectPreview.title";
 }

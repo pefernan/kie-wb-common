@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.client.ui.displayer;
+package org.kie.workbench.common.forms.cms.components.client.ui.report.entry;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.dom.Button;
@@ -27,38 +28,46 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
+import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
 @Templated
-public class FormDisplayerViewImpl implements IsElement, FormDisplayerView {
+public class ReportEntryViewImpl implements IsElement, ReportEntryView {
 
     @Inject
-    @DataField("container")
-    private Div container;
+    @DataField
+    private Div content;
 
     @Inject
-    @DataField("submit-button")
-    private Button submit;
+    @DataField
+    private Button preview;
 
-    @Inject
-    @DataField("cancel-button")
-    private Button cancel;
+    private DynamicFormRenderer formRenderer;
 
     private Presenter presenter;
+
+    @Inject
+    public ReportEntryViewImpl(DynamicFormRenderer formRenderer) {
+        this.formRenderer = formRenderer;
+    }
+
+    @PostConstruct
+    public void initialize() {
+        DOMUtil.appendWidgetToElement(content, formRenderer);
+    }
+
+    @Override
+    public void display(FormRenderingContext context) {
+        formRenderer.render(context);
+    }
 
     @Override
     public void init(Presenter presenter) {
         this.presenter = presenter;
-
-        DOMUtil.appendWidgetToElement(container, presenter.getRenderer());
     }
 
-    @EventHandler("submit-button")
-    public void onSubmit(@ForEvent("click") Event event) {
-        presenter.onSubmit();
-    }
-
-    @EventHandler("cancel-button")
-    public void onCancel(@ForEvent("click") Event event) {
-        presenter.onCancel();
+    @EventHandler
+    public void onPreview(@ForEvent("click") Event event) {
+        presenter.onPreview();
     }
 }
