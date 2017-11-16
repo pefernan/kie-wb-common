@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.processing.engine.handling;
+package org.kie.workbench.common.forms.processing.engine.handling.resources.script;
 
-import java.util.Collection;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.TextResource;
 
-/**
- * Component that provides the FormFields
- */
-public interface FormFieldProvider {
+public interface JsResource extends ClientBundle {
 
-    /**
-     * Retrieves the FormField identified by the given name
-     */
-    FormField findFormField(String fieldName);
-
-    /**
-     * Retrieves all the available fields on the Form
-     */
-    Collection<FormField> getAll();
+    @Source("processing.js")
+    TextResource processingLib();
 }

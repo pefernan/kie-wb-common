@@ -19,7 +19,12 @@ package org.kie.workbench.common.forms.processing.engine.handling;
 import java.util.Collection;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsType;
+import org.jboss.errai.databinding.client.api.Converter;
 
+@JsType(namespace = JsPackage.GLOBAL)
 public interface FormField {
 
     public static final String FORM_GROUP_SUFFIX = "_form_group";
@@ -43,6 +48,7 @@ public interface FormField {
 
     void setError(String error);
 
+    @JsIgnore
     IsWidget getWidget();
 
     default boolean isContentValid() {
@@ -50,4 +56,8 @@ public interface FormField {
     }
 
     Collection<FieldChangeListener> getChangeListeners();
+
+    default Converter getConverter() {
+        return null;
+    }
 }

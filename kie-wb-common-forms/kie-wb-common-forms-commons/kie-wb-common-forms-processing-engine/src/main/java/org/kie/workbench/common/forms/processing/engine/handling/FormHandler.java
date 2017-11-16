@@ -142,4 +142,7 @@ public interface FormHandler<T> {
      * Sets the form widgets into readOnly mode
      */
     void setReadOnly(boolean readOnly);
+
+    void setUp(Form form,
+               T model);
 }

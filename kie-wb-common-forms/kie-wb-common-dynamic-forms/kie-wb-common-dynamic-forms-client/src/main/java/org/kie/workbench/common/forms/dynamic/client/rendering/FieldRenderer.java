@@ -21,10 +21,12 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.errai.databinding.client.api.Converter;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroupDisplayers.FormGroupDisplayer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroupDisplayers.FormGroupDisplayerFactory;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroupDisplayers.FormGroupDisplayerWidgetAware;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroupDisplayers.impl.configError.ConfigErrorFormGroupDisplayer;
+import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.RequiresValueConverter;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.model.FieldDefinition;
@@ -97,6 +99,14 @@ public abstract class FieldRenderer<F extends FieldDefinition> {
                 @Override
                 public Collection<FieldChangeListener> getChangeListeners() {
                     return getFieldChangeListeners();
+                }
+
+                @Override
+                public Converter getConverter() {
+                    if(FieldRenderer.this instanceof RequiresValueConverter) {
+                        return ((RequiresValueConverter)FieldRenderer.this).getConverter();
+                    }
+                    return super.getConverter();
                 }
             };
 

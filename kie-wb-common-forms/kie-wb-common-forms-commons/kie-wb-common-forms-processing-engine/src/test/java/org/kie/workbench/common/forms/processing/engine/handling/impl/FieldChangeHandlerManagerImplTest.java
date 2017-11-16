@@ -57,8 +57,6 @@ public class FieldChangeHandlerManagerImplTest extends AbstractFormEngineTest {
         FormValidatorImpl formValidator = new FormValidatorImpl(new DefaultModelValidator(validator),
                                                                 new FieldStateValidatorImpl(translationService));
 
-        formValidator.setFormFieldProvider(formFieldProvider);
-
         fieldChangeHandlerManager = new FieldChangeHandlerManagerImpl();
         fieldChangeHandlerManager.setValidator(formValidator);
 
@@ -73,7 +71,7 @@ public class FieldChangeHandlerManagerImplTest extends AbstractFormEngineTest {
     @Test
     public void testRegisterFieldName() {
         fieldChangeHandlerManager = spy(fieldChangeHandlerManager);
-        Collection<FormField> fields = formFieldProvider.getAll();
+        Collection<FormField> fields = formFields;
         for (FormField formField : fields) {
             fieldChangeHandlerManager.registerField(formField.getFieldName());
         }
@@ -380,7 +378,7 @@ public class FieldChangeHandlerManagerImplTest extends AbstractFormEngineTest {
     }
 
     protected void registerFields(boolean validateOnChange) {
-        for (FormField formField : formFieldProvider.getAll()) {
+        for (FormField formField : formFields) {
             fieldChangeHandlerManager.registerField(formField.getFieldName(),
                                                     validateOnChange);
         }

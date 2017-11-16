@@ -19,16 +19,16 @@ package org.kie.workbench.common.forms.processing.engine.handling.impl;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.forms.processing.engine.handling.FieldStateValidator;
+import org.kie.workbench.common.forms.processing.engine.handling.Form;
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
-import org.kie.workbench.common.forms.processing.engine.handling.FormFieldProvider;
 import org.kie.workbench.common.forms.processing.engine.handling.FormValidator;
 import org.kie.workbench.common.forms.processing.engine.handling.ModelValidator;
 
 public class FormValidatorImpl implements FormValidator {
 
-    private ModelValidator modelValidator;
+    private Form form;
 
-    private FormFieldProvider formFieldProvider;
+    private ModelValidator modelValidator;
 
     private FieldStateValidator fieldStateValidator;
 
@@ -40,13 +40,18 @@ public class FormValidatorImpl implements FormValidator {
     }
 
     @Override
+    public void setForm(Form form) {
+        this.form = form;
+    }
+
+    @Override
     public boolean validate(Object model) {
 
         clearAllFieldErrors();
 
-        boolean isModelValid = modelValidator.validate(formFieldProvider.getAll(),
+        boolean isModelValid = modelValidator.validate(form.getFormFields(),
                                                        model);
-        boolean isFieldStateValid = fieldStateValidator.validate(formFieldProvider.getAll());
+        boolean isFieldStateValid = fieldStateValidator.validate(form.getFormFields());
 
         return isFieldStateValid && isModelValid;
     }
@@ -57,7 +62,8 @@ public class FormValidatorImpl implements FormValidator {
 
         clearFieldError(fieldName);
 
-        FormField field = formFieldProvider.findFormField(fieldName);
+        FormField field = findFormField(fieldName);
+
         if (!fieldStateValidator.validate(field)) {
             return false;
         }
@@ -66,21 +72,28 @@ public class FormValidatorImpl implements FormValidator {
                                        model);
     }
 
-    public void setFormFieldProvider(FormFieldProvider formFieldProvider) {
-        this.formFieldProvider = formFieldProvider;
-    }
 
     protected void clearAllFieldErrors() {
-        for (FormField formField : formFieldProvider.getAll()) {
+        for (FormField formField : form.getFormFields()) {
             formField.clearError();
         }
     }
 
     protected void clearFieldError(String fieldName) {
-        FormField field = formFieldProvider.findFormField(fieldName);
+        FormField field = findFormField(fieldName);
         if (field != null) {
             field.clearError();
         }
+    }
+
+    protected FormField findFormField(String fieldName) {
+        FormField field = form.getFieldByName(fieldName);
+
+        if (field == null) {
+            field = form.getFieldByBinding(fieldName);
+        }
+
+        return field;
     }
 
     public ModelValidator getModelValidator() {

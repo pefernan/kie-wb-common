@@ -38,4 +38,6 @@ public interface FieldChangeHandlerManager {
     void clear();
 
     void setValidator(FormValidator validator);
+
+    void setForm(Form form);
 }

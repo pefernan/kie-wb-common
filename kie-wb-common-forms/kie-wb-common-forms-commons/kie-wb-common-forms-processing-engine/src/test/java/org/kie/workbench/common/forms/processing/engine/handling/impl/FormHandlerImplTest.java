@@ -43,7 +43,6 @@ import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeList
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.kie.workbench.common.forms.processing.engine.handling.IsNestedModel;
 import org.kie.workbench.common.forms.processing.engine.handling.impl.model.ModelProxy;
-import org.kie.workbench.common.forms.processing.engine.handling.impl.test.TestFormFieldProvider;
 import org.kie.workbench.common.forms.processing.engine.handling.impl.test.TestFormHandler;
 import org.mockito.Mock;
 
@@ -90,14 +89,10 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
         FormValidatorImpl formValidator = new FormValidatorImpl(new DefaultModelValidator(validator), new FieldStateValidatorImpl(translationService));
 
-        formValidator.setFormFieldProvider(formFieldProvider);
-
         FieldChangeHandlerManagerImpl fieldChangeHandlerManager = new FieldChangeHandlerManagerImpl();
         fieldChangeHandlerManager.setValidator(formValidator);
 
         formHandler = new TestFormHandler(formValidator, fieldChangeHandlerManager, binder);
-
-        formHandler.getAll().addAll(formFieldProvider.getAll());
     }
 
     @Test
@@ -129,7 +124,7 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
         when(integerConverter.toWidgetValue(25)).thenReturn(25l);
         when(integerConverter.toModelValue(25l)).thenReturn(25);
 
-        for (FormField formField : formFieldProvider.getAll()) {
+        for (FormField formField : formFields) {
             if (formField.getFieldName().equals(VALUE_FIELD)) {
                 formHandler.registerInput(formField, integerConverter);
             } else {
@@ -145,11 +140,11 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
         formHandler.addFieldChangeHandler(USER_ADDRESS_FIELD, userAddress);
 
         if (checkBindings) {
-            verify(binder, times(formFieldProvider.getAll().size())).bind(anyObject(), anyString(), any(), any());
+            verify(binder, times(formFields.size())).bind(anyObject(), anyString(), any(), any());
         } else {
             verify(binder, never()).bind(anyObject(), anyString());
         }
-        verify(binder, times(formFieldProvider.getAll().size())).addPropertyChangeHandler(anyString(), any());
+        verify(binder, times(formFields.size())).addPropertyChangeHandler(anyString(), any());
     }
 
     @Test
@@ -177,7 +172,7 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
             int expectedTimes = 1;
 
             if (formHandler.handlerHelper.supportsInputBinding()) {
-                expectedTimes += formFieldProvider.getAll().size();
+                expectedTimes += formFields.size();
             }
             verify(binder, times(expectedTimes)).getModel();
             // checking if property is null
@@ -212,7 +207,6 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
     @Test
     public void testForceModelSynchronization() {
-        formFieldProvider = new TestFormFieldProvider();
         checkBindings = true;
         IsWidgetAndNestedModel myModel = new IsWidgetAndNestedModel() {
 
@@ -347,9 +341,9 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
         assertFalse(formHandler.validate());
 
         if (!skipGetModel) {
-            verify(binder, times(formFieldProvider.getAll().size() + 1)).getModel();
+            verify(binder, times(formFields.size() + 1)).getModel();
             // checking if property is null
-            verify(proxy, times(formFieldProvider.getAll().size())).get(anyString());
+            verify(proxy, times(formFields.size())).get(anyString());
         }
 
         assertFalse(formHandler.validate(VALUE_FIELD));
@@ -369,7 +363,7 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
         } else {
             verify(binder, never()).unbind();
         }
-        verify(unsubscribeHandle, times(formFieldProvider.getAll().size())).unsubscribe();
+        verify(unsubscribeHandle, times(formFields.size())).unsubscribe();
     }
 
     interface IsWidgetAndNestedModel extends IsWidget, IsNestedModel, HasValue<Integer> {

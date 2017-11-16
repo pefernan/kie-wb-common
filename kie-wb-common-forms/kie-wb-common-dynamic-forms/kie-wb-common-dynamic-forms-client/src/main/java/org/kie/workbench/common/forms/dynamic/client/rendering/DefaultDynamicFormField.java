@@ -22,12 +22,16 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsType;
 import org.gwtbootstrap3.client.ui.constants.ValidationState;
 import org.jboss.errai.common.client.api.Assert;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.uberfire.ext.widgets.common.client.common.StyleHelper;
 
+@JsType(isNative = true, namespace = JsPackage.GLOBAL)
 public abstract class DefaultDynamicFormField<F extends FieldDefinition, W extends Widget> implements FormField {
 
     protected F field;
@@ -121,6 +125,7 @@ public abstract class DefaultDynamicFormField<F extends FieldDefinition, W exten
         }
     }
 
+    @JsIgnore
     @Override
     public IsWidget getWidget() {
         return widget;

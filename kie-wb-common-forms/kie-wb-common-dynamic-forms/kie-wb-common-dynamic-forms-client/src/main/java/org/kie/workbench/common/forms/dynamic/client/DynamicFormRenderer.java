@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.forms.dynamic.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -29,6 +32,7 @@ import org.kie.workbench.common.forms.crud.client.component.formDisplay.IsFormVi
 import org.kie.workbench.common.forms.dynamic.client.init.FormHandlerGeneratorManager;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
+import org.kie.workbench.common.forms.dynamic.client.rendering.FormLayoutGenerator;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.RequiresValueConverter;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.subform.widget.SubFormWidget;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
@@ -37,6 +41,8 @@ import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormMode
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.relations.subForm.definition.SubFormFieldDefinition;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
+import org.kie.workbench.common.forms.processing.engine.handling.Form;
+import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.kie.workbench.common.forms.processing.engine.handling.FormHandler;
 import org.uberfire.mvp.Command;
 
@@ -116,8 +122,6 @@ public class DynamicFormRenderer implements IsWidget, IsFormView {
 
         this.context = context;
 
-        formHandler = formHandlerGenerator.getFormHandler(context);
-
         view.render(context);
         if (context.getModel() != null) {
             bind(context.getModel());
@@ -127,9 +131,23 @@ public class DynamicFormRenderer implements IsWidget, IsFormView {
     public void bind(Object model) {
         if (context != null && model != null) {
             context.setModel(model);
-            formHandler.setUp(model);
             view.bind();
         }
+    }
+
+    public void bind(FormLayoutGenerator formLayoutGenerator) {
+        List<FormField> formFields = new ArrayList<>();
+
+        Form form = new Form(formFields);
+
+        formLayoutGenerator.getLayoutFields().forEach(fieldLayoutComponent -> {
+            FormField formField = fieldLayoutComponent.getFieldRenderer().getFormField();
+            formFields.add(formField);
+        });
+
+        formHandler = formHandlerGenerator.getFormHandler(context);
+
+        formHandler.setUp(form, context.getModel());
     }
 
     protected void bind(FieldRenderer renderer) {

@@ -22,6 +22,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.google.jsinterop</groupId>
+      <artifactId>jsinterop-annotations</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3</artifactId>
     </dependency>

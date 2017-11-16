@@ -57,8 +57,6 @@ public class FormValidatorImplTest extends AbstractFormEngineTest {
         formValidator = new FormValidatorImpl(new DefaultModelValidator(validator),
                                               fieldStateValidator);
 
-        formValidator.setFormFieldProvider(formFieldProvider);
-
         when(fieldStateValidator.validate(any(FormField.class))).thenReturn(true);
         when(fieldStateValidator.validate(anyCollection())).thenReturn(true);
     }
@@ -89,8 +87,8 @@ public class FormValidatorImplTest extends AbstractFormEngineTest {
         when(fieldStateValidator.validate(anyCollection())).thenReturn(fieldStateSuccess);
         formValidator.setModelValidator(modelValidator);
         assertEquals(formValidator.validate(model), modelSuccess && fieldStateSuccess);
-        verify(fieldStateValidator).validate(formFieldProvider.getAll());
-        verify(modelValidator).validate(formFieldProvider.getAll(), model);
+        verify(fieldStateValidator).validate(formFields);
+        verify(modelValidator).validate(formFields, model);
     }
 
     @Test

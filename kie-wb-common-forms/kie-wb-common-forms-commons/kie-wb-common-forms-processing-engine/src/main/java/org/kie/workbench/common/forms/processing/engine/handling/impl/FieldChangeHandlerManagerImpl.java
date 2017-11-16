@@ -27,11 +27,14 @@ import javax.enterprise.context.Dependent;
 import org.jboss.errai.common.client.api.Assert;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandlerManager;
+import org.kie.workbench.common.forms.processing.engine.handling.Form;
+import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.kie.workbench.common.forms.processing.engine.handling.FormValidator;
 
 @Dependent
 public class FieldChangeHandlerManagerImpl implements FieldChangeHandlerManager {
 
+    private Form form;
     private FormValidator validator;
 
     private Map<String, FieldChangeProcessor> fieldExecutors = new HashMap<>();
@@ -40,6 +43,19 @@ public class FieldChangeHandlerManagerImpl implements FieldChangeHandlerManager 
     @Override
     public void setValidator(FormValidator validator) {
         this.validator = validator;
+    }
+
+    @Override
+    public void setForm(Form form) {
+        this.form = form;
+
+        form.getFormFields().stream().forEach(formField -> {
+            registerField(formField.getFieldName(), formField.isValidateOnChange());
+
+            formField.getChangeListeners().forEach(listener -> addFieldChangeHandler(listener.getFieldToListen(), listener.getChangeHandler()));
+        });
+
+
     }
 
     @Override
@@ -123,6 +139,15 @@ public class FieldChangeHandlerManagerImpl implements FieldChangeHandlerManager 
             doProcess(defaultChangeHandlers,
                       fieldName,
                       newValue);
+            FormField formField = form.getFieldByBinding(fieldName);
+
+            if (formField == null) {
+                formField = form.getFieldByName(fieldName);
+            }
+
+            if(formField != null) {
+                FieldChangeExecutor.execute(formField, newValue);
+            }
         }
     }
 
@@ -137,6 +162,7 @@ public class FieldChangeHandlerManagerImpl implements FieldChangeHandlerManager 
 
     @Override
     public void clear() {
+        form = null;
         fieldExecutors.clear();
         defaultChangeHandlers.clear();
     }

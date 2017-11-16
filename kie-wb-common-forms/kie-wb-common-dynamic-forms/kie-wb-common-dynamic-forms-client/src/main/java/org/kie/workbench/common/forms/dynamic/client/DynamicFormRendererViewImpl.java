@@ -60,6 +60,7 @@ public class DynamicFormRendererViewImpl extends Composite implements DynamicFor
 
     @Override
     public void bind() {
+        presenter.bind(layoutGenerator);
         for (FieldLayoutComponent fieldComponent : layoutGenerator.getLayoutFields()) {
             presenter.bind(fieldComponent.getFieldRenderer());
         }

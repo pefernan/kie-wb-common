@@ -16,11 +16,23 @@
 
 package org.kie.workbench.common.forms.processing.engine.handling;
 
+import javax.annotation.PostConstruct;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.ScriptInjector;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.shared.api.annotations.Bundle;
+import org.kie.workbench.common.forms.processing.engine.handling.resources.script.JsResource;
 
 @EntryPoint
 @Bundle("resources/i18n/ProcessingEngineConstants.properties")
 public class ProcessingEngineEntryPoint {
 
+    @PostConstruct
+    public void init() {
+        JsResource jsResource = GWT.create(JsResource.class);
+        String processingLib = jsResource.processingLib().getText();
+        ScriptInjector.fromString(processingLib).setWindow(ScriptInjector.TOP_WINDOW).inject();
+
+    }
 }

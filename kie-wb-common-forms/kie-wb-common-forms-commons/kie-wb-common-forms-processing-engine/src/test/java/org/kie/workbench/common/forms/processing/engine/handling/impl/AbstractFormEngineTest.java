@@ -16,8 +16,10 @@
 
 package org.kie.workbench.common.forms.processing.engine.handling.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -27,7 +29,6 @@ import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHand
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.kie.workbench.common.forms.processing.engine.handling.impl.model.Model;
 import org.kie.workbench.common.forms.processing.engine.handling.impl.model.User;
-import org.kie.workbench.common.forms.processing.engine.handling.impl.test.TestFormFieldProvider;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -85,9 +86,9 @@ public abstract class AbstractFormEngineTest extends TestCase {
     @Mock
     protected FieldChangeHandler userAddress;
 
-    protected TestFormFieldProvider formFieldProvider;
-
     protected Model model;
+
+    protected List<FormField> formFields = new ArrayList<>();
 
     protected void init() {
 
@@ -103,24 +104,22 @@ public abstract class AbstractFormEngineTest extends TestCase {
         model.setUser(user);
         model.setValue(25);
 
-        formFieldProvider = new TestFormFieldProvider();
-
-        formFieldProvider.addFormField(generateFormField(VALUE_FIELD,
+        formFields.add(generateFormField(VALUE_FIELD,
                                                          "value",
                                                          true));
-        formFieldProvider.addFormField(generateFormField(USER_NAME_FIELD,
+        formFields.add(generateFormField(USER_NAME_FIELD,
                                                          "user.name",
                                                          true));
-        formFieldProvider.addFormField(generateFormField(USER_LAST_NAME_FIELD,
+        formFields.add(generateFormField(USER_LAST_NAME_FIELD,
                                                          "user.lastName",
                                                          true));
-        formFieldProvider.addFormField(generateFormField(USER_BIRTHDAY_FIELD,
+        formFields.add(generateFormField(USER_BIRTHDAY_FIELD,
                                                          "user.birthday",
                                                          true));
-        formFieldProvider.addFormField(generateFormField(USER_MARRIED_FIELD,
+        formFields.add(generateFormField(USER_MARRIED_FIELD,
                                                          "user.married",
                                                          true));
-        formFieldProvider.addFormField(generateFormField(USER_ADDRESS_FIELD,
+        formFields.add(generateFormField(USER_ADDRESS_FIELD,
                                                          "user.address",
                                                          true));
 
@@ -174,7 +173,7 @@ public abstract class AbstractFormEngineTest extends TestCase {
 
     protected void checkClearedFields(String... cleared) {
         Arrays.stream(cleared).forEach(fieldName -> {
-            FormField field = formFieldProvider.findFormField(fieldName);
+            FormField field = findFormField(fieldName);
             assertNotNull(field);
             verify(field,
                    atLeastOnce()).clearError();
@@ -208,12 +207,22 @@ public abstract class AbstractFormEngineTest extends TestCase {
                                        String... fields) {
 
         Arrays.stream(fields).forEach(fieldName -> {
-            FormField field = formFieldProvider.findFormField(fieldName);
+            FormField field = findFormField(fieldName);
             assertNotNull(field);
             verify(field,
                    atLeastOnce()).clearError();
             verify(field,
                    setErrorTimes).setError(anyString());
         });
+    }
+
+    protected FormField findFormField(String fieldName) {
+        FormField field = formFields.stream().filter(formField -> fieldName.equals(formField.getFieldName())).findFirst().get();
+
+        if (field == null) {
+            field = formFields.stream().filter(formField -> fieldName.equals(formField.getFieldBinding())).findFirst().get();
+        }
+
+        return field;
     }
 }

@@ -21,6 +21,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.google.jsinterop</groupId>
+      <artifactId>jsinterop-annotations</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-common</artifactId>
     </dependency>
