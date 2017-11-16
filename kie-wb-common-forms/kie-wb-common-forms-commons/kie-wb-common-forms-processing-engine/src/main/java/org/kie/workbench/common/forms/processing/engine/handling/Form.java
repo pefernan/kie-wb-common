@@ -21,7 +21,7 @@ import java.util.List;
 
 import jsinterop.annotations.JsType;
 
-@JsType
+@JsType(isNative = true)
 public class Form {
     private List<FormField> formFields;
 

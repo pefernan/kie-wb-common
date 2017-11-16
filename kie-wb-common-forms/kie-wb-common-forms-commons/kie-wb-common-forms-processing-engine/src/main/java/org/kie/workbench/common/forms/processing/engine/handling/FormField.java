@@ -24,11 +24,14 @@ import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
 import org.jboss.errai.databinding.client.api.Converter;
 
-@JsType(namespace = JsPackage.GLOBAL)
+@JsType(isNative = true, namespace = JsPackage.GLOBAL)
 public interface FormField {
 
-    public static final String FORM_GROUP_SUFFIX = "_form_group";
-    public static final String HELP_BLOCK_SUFFIX = "_help_block";
+    @JsIgnore
+    String FORM_GROUP_SUFFIX = "_form_group";
+
+    @JsIgnore
+    String HELP_BLOCK_SUFFIX = "_help_block";
 
     String getFieldName();
 

@@ -42,6 +42,7 @@ public abstract class DefaultDynamicFormField<F extends FieldDefinition, W exten
 
     protected Element helpBlock;
 
+    @JsIgnore
     public DefaultDynamicFormField(F field,
                                    W widget) {
         Assert.notNull("Field cannot be null",
