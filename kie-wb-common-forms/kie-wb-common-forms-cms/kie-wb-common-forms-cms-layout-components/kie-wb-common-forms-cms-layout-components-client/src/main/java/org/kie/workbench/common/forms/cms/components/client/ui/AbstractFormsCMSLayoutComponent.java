@@ -27,12 +27,12 @@ import org.kie.workbench.common.forms.cms.components.service.shared.RenderingCon
 import org.kie.workbench.common.forms.cms.components.shared.model.BasicComponentSettings;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
 import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
+import org.uberfire.ext.layout.editor.client.api.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
-import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorDragComponent;
 
-public abstract class AbstractFormsCMSLayoutComponent<SETTINGS extends BasicComponentSettings, READER extends SettingsReader<SETTINGS>> implements PerspectiveEditorDragComponent,
-                                                                                                                                          HasModalConfiguration {
+public abstract class AbstractFormsCMSLayoutComponent<SETTINGS extends BasicComponentSettings, READER extends SettingsReader<SETTINGS>> implements LayoutDragComponent,
+                                                                                                                                                   HasModalConfiguration {
 
     protected TranslationService translationService;
     protected SettingsDisplayer settingsDisplayer;
