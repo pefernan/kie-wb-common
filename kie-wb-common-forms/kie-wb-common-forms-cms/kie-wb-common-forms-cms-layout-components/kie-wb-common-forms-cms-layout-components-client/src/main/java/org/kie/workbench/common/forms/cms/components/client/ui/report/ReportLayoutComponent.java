@@ -18,6 +18,7 @@ package org.kie.workbench.common.forms.cms.components.client.ui.report;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
@@ -36,6 +37,7 @@ import org.kie.workbench.common.forms.cms.components.client.ui.settings.Settings
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.report.ReportSettings;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
@@ -55,7 +57,7 @@ public class ReportLayoutComponent extends AbstractFormsCMSLayoutComponent<Repor
                                  ReportSettingsReader reader,
                                  Caller<RenderingContextGenerator> contextGenerator,
                                  ManagedInstance<ReportEntry> reportEntries,
-                                 PersistenceService persistenceService,
+                                 Caller<PersistenceService> persistenceService,
                                  ReportLayoutComponentView view) {
         super(translationService,
               settingsDisplayer,
@@ -79,19 +81,21 @@ public class ReportLayoutComponent extends AbstractFormsCMSLayoutComponent<Repor
 
                 originalContext = contextResponse;
 
-                List<Map<String, Object>> result = persistenceService.query(settings.getDataObject());
+                persistenceService.call((RemoteCallback<List<PersistentModel>>) persistentModels -> {
 
-                result.forEach(instance -> {
+                    List<Map<String, Object>> result =  persistentModels.stream().map(PersistentModel::getModel).collect(Collectors.toList());
+                    result.forEach(instance -> {
 
-                    MapModelRenderingContext tableContext = getTableContext(instance);
-                    MapModelRenderingContext previewContext = getPreviewContext(instance);
+                        MapModelRenderingContext tableContext = getTableContext(instance);
+                        MapModelRenderingContext previewContext = getPreviewContext(instance);
 
-                    ReportEntry entry = reportEntries.get();
+                        ReportEntry entry = reportEntries.get();
 
-                    entry.init(instance, tableContext, previewContext);
+                        entry.init(instance, tableContext, previewContext);
 
-                    view.append(entry);
-                });
+                        view.append(entry);
+                    });
+                }).query(settings.getDataObject());
             }).generateContext(settings);
         }
         return ElementWrapperWidget.getWidget(view.getElement());

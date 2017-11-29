@@ -35,7 +35,9 @@ import org.kie.workbench.common.forms.cms.components.client.ui.displayer.FormDis
 import org.kie.workbench.common.forms.cms.components.client.ui.settings.SettingsDisplayer;
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.objectCreation.ObjectCreationSettings;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 
@@ -51,7 +53,7 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
                                    ObjectCreationSettingsReader reader,
                                    Caller<RenderingContextGenerator> contextGenerator,
                                    FormDisplayer displayer,
-                                   PersistenceService persistenceService) {
+                                   Caller<PersistenceService> persistenceService) {
         super(translationService,
               settingsDisplayer,
               reader,
@@ -99,10 +101,16 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
                                instance = context.getModel();
                            }
 
-                           this.persistenceService.createInstance(settings.getDataObject(),
-                                                                  instance);
-                           Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
-                           initDisplayer();
+                           this.persistenceService.call((RemoteCallback<PersistenceResponse>) persistenceResponse -> {
+                               if(PersistenceResponse.SUCCESS.equals(persistenceResponse)) {
+                                   Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                                   initDisplayer();
+                               } else {
+                                   Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+                                   initDisplayer();
+                               }
+                           }).createInstance(new PersistentModel(null, settings.getDataObject(),
+                                                                     instance));
                        },
                        () -> {
                            initDisplayer();

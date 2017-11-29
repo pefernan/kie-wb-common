@@ -21,6 +21,9 @@ import org.jboss.errai.ui.shared.api.annotations.TranslationKey;
 public interface CMSComponentsConstants {
 
     @TranslationKey(defaultValue = "")
+    String PersistenceErrorMessage = "PersistenceError.message";
+
+    @TranslationKey(defaultValue = "")
     String ObjectCreationComponentTitle = "ObjectCreationComponent.title";
 
     @TranslationKey(defaultValue = "")
@@ -28,6 +31,9 @@ public interface CMSComponentsConstants {
 
     @TranslationKey(defaultValue = "")
     String ObjectEditionComponentTitle = "ObjectEditionComponent.title";
+
+    @TranslationKey(defaultValue = "")
+    String ObjectEditionComponentConfirmation = "ObjectEditionComponent.confirmation";
 
     @TranslationKey(defaultValue = "")
     String CRUDLayoutComponentTitle = "CRUDLayoutComponent.title";

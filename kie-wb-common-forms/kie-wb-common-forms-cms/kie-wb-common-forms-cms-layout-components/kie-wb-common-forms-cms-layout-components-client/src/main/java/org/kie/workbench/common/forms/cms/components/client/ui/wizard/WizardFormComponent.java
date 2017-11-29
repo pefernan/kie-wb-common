@@ -37,7 +37,9 @@ import org.kie.workbench.common.forms.cms.components.client.ui.wizard.ui.WizardF
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.wizard.WizardSettings;
 import org.kie.workbench.common.forms.cms.components.shared.model.wizard.WizardStep;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 import org.kie.workbench.common.forms.model.FormDefinition;
@@ -53,7 +55,7 @@ public class WizardFormComponent extends AbstractFormsCMSLayoutComponent<WizardS
     public WizardFormComponent(TranslationService translationService,
                                SettingsDisplayer settingsDisplayer,
                                WizardSettingsReader reader,
-                               PersistenceService persistenceService,
+                               Caller<PersistenceService> persistenceService,
                                Caller<RenderingContextGenerator> contextGenerator,
                                WizardForm wizardForm) {
         super(translationService,
@@ -99,8 +101,13 @@ public class WizardFormComponent extends AbstractFormsCMSLayoutComponent<WizardS
     }
 
     private void persist(Map<String, Object> instance) {
-        persistenceService.createInstance(settings.getDataObject(), instance);
-        Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+        persistenceService.call((RemoteCallback<PersistenceResponse>) persistenceResponse -> {
+            if(PersistenceResponse.SUCCESS.equals(persistenceResponse)) {
+                Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+            } else {
+                Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+            }
+        }).createInstance(new PersistentModel(null, settings.getDataObject(), instance));
     }
 
     @Override

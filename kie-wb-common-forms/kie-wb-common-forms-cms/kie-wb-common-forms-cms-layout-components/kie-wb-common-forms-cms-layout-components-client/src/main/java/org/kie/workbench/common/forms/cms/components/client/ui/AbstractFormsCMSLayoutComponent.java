@@ -27,17 +27,17 @@ import org.kie.workbench.common.forms.cms.components.service.shared.RenderingCon
 import org.kie.workbench.common.forms.cms.components.shared.model.BasicComponentSettings;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
 import org.uberfire.ext.layout.editor.client.api.HasModalConfiguration;
-import org.uberfire.ext.layout.editor.client.api.LayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.api.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.api.RenderingContext;
+import org.uberfire.ext.plugin.client.perspective.editor.api.PerspectiveEditorCoreComponent;
 
-public abstract class AbstractFormsCMSLayoutComponent<SETTINGS extends BasicComponentSettings, READER extends SettingsReader<SETTINGS>> implements LayoutDragComponent,
+public abstract class AbstractFormsCMSLayoutComponent<SETTINGS extends BasicComponentSettings, READER extends SettingsReader<SETTINGS>> implements PerspectiveEditorCoreComponent,
                                                                                                                                                    HasModalConfiguration {
 
     protected TranslationService translationService;
     protected SettingsDisplayer settingsDisplayer;
     protected Caller<RenderingContextGenerator> contextGenerator;
-    protected PersistenceService persistenceService;
+    protected Caller<PersistenceService> persistenceService;
 
     protected READER reader;
 
@@ -46,7 +46,7 @@ public abstract class AbstractFormsCMSLayoutComponent<SETTINGS extends BasicComp
     public AbstractFormsCMSLayoutComponent(TranslationService translationService,
                                            SettingsDisplayer settingsDisplayer,
                                            READER reader,
-                                           PersistenceService persistenceService,
+                                           Caller<PersistenceService> persistenceService,
                                            Caller<RenderingContextGenerator> contextGenerator) {
         this.translationService = translationService;
         this.settingsDisplayer = settingsDisplayer;

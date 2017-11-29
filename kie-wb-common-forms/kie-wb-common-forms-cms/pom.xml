@@ -32,6 +32,7 @@
   <description>Kie Workbench - Forms - Common - CMS (Content Management System)</description>
 
   <modules>
+    <module>kie-wb-common-forms-cms-common</module>
     <module>kie-wb-common-forms-cms-persistence</module>
     <module>kie-wb-common-forms-cms-layout-components</module>
   </modules>

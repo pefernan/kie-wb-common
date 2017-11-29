@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
@@ -38,7 +39,9 @@ import org.kie.workbench.common.forms.cms.components.client.ui.AbstractFormsCMSL
 import org.kie.workbench.common.forms.cms.components.client.ui.settings.SettingsDisplayer;
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.crud.CRUDSettings;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
 import org.kie.workbench.common.forms.crud.client.component.CrudActionsHelper;
 import org.kie.workbench.common.forms.dynamic.client.helper.MapModelBindingHelper;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.multipleSubform.ColumnGeneratorManager;
@@ -56,7 +59,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
     private FormRenderingContext context;
     private CRUDLayoutComponentView view;
     private MapModelBindingHelper mapModelBindingHelper;
-    private List<Map<String, Object>> values;
+    private List<PersistentModel> values;
     private List<BindableProxy<Map<String, Object>>> tableValues;
 
     @Inject
@@ -67,7 +70,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
                                ColumnGeneratorManager columnGeneratorManager,
                                CRUDLayoutComponentView view,
                                MapModelBindingHelper mapModelBindingHelper,
-                               PersistenceService persistenceService) {
+                               Caller<PersistenceService> persistenceService) {
         super(translationService,
               settingsDisplayer,
               reader,
@@ -94,6 +97,11 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
         view.getCRUD().refresh();
     }
 
+    protected void refresh() {
+        view.showCRUD();
+        refreshCrud();
+    }
+
     @Override
     protected IsWidget getWidget() {
         if (checkSettings()) {
@@ -101,30 +109,35 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
                 if (formRenderingContext != null) {
                     this.context = formRenderingContext;
 
-                    values = persistenceService.query(settings.getDataObject());
-                    tableValues = values.stream().map(CRUDLayoutComponent.this::convert).collect(Collectors.toList());
+                    persistenceService.call((RemoteCallback<List<PersistentModel>>) persistentModels -> {
+                        values = persistentModels;
 
-                    dataProvider = new AsyncDataProvider<BindableProxy<Map<String, Object>>>() {
-                        @Override
-                        protected void onRangeChanged(HasData<BindableProxy<Map<String, Object>>> hasData) {
-                            if (values != null) {
-                                updateRowCount(tableValues.size(),
-                                               true);
-                                updateRowData(0,
-                                              tableValues);
-                            } else {
-                                updateRowCount(0,
-                                               true);
-                                updateRowData(0,
-                                              new ArrayList<>());
+                        tableValues = values.stream().map(persistentModel -> convert(persistentModel.getModel())).collect(Collectors.toList());
+
+                        dataProvider = new AsyncDataProvider<BindableProxy<Map<String, Object>>>() {
+                            @Override
+                            protected void onRangeChanged(HasData<BindableProxy<Map<String, Object>>> hasData) {
+                                if (values != null) {
+                                    updateRowCount(tableValues.size(),
+                                                   true);
+                                    updateRowData(0,
+                                                  tableValues);
+                                } else {
+                                    updateRowCount(0,
+                                                   true);
+                                    updateRowData(0,
+                                                  new ArrayList<>());
+                                }
                             }
-                        }
-                    };
 
-                    view.showCRUD();
 
-                    refreshCrud();
+                        };
 
+                        view.showCRUD();
+
+                        refreshCrud();
+
+                    }).query(settings.getDataObject());
                 }
             }).generateContext(settings);
         }
@@ -212,11 +225,17 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
 
                 view.showForm(createContext,
                               () -> {
-                                  persistenceService.createInstance(settings.getDataObject(),
-                                                                   createContext.getModel());
-                                  tableValues.add(convert(createContext.getModel()));
-                                  view.showCRUD();
-                                  refreshCrud();
+                                  persistenceService.call((RemoteCallback<PersistenceResponse>) persistenceResponse -> {
+                                      if(PersistenceResponse.SUCCESS.equals(persistenceResponse)) {
+                                          Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                                          tableValues.add(convert(createContext.getModel()));
+                                          refresh();
+                                      } else {
+                                          Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+                                          refresh();
+                                      }
+                                  }).createInstance(new PersistentModel(null, settings.getDataObject(), createContext.getModel()));
+
                               },
                               () -> {
                                   view.showCRUD();
@@ -225,21 +244,31 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
             }
 
             @Override
-            public void editInstance(int index) {
+            public void editInstance(final int index) {
                 MapModelRenderingContext createContext = new MapModelRenderingContext();
                 createContext.getAvailableForms().putAll(context.getAvailableForms());
                 createContext.setRootForm((FormDefinition) context.getAvailableForms().get(settings.getCreationForm()));
-                createContext.setModel(persistenceService.getInstance(settings.getDataObject(), index));
+
+                final PersistentModel editedModel = values.get(index);
+
+                createContext.setModel(editedModel.getModel());
 
                 view.showForm(createContext,
                               () -> {
-                                  persistenceService.saveInstance(settings.getDataObject(),
-                                                                   index,
-                                                                   createContext.getModel());
-                                  values.set(index, createContext.getModel());
-                                  tableValues.set(index, convert(createContext.getModel()));
-                                  view.showCRUD();
-                                  refreshCrud();
+                                  editedModel.setModel(createContext.getModel());
+                                  persistenceService.call(new RemoteCallback<PersistenceResponse>() {
+                                      @Override
+                                      public void callback(PersistenceResponse persistenceResponse) {
+                                          if(PersistenceResponse.SUCCESS.equals(persistenceResponse)) {
+                                              Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectEditionComponentConfirmation));
+                                              tableValues.set(index, convert(createContext.getModel()));
+                                              refresh();
+                                          } else {
+                                              Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+                                              refresh();
+                                          }
+                                      }
+                                  }).saveInstance(editedModel);
                               },
                               () -> {
                                   view.showCRUD();
@@ -249,7 +278,8 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
 
             @Override
             public void deleteInstance(int index) {
-                persistenceService.deleteInstance(settings.getDataObject(), index);
+                persistenceService.call().deleteInstance(settings.getDataObject(), values.get(index).getId());
+                values.remove(index);
                 tableValues.remove(index);
                 refreshCrud();
             }

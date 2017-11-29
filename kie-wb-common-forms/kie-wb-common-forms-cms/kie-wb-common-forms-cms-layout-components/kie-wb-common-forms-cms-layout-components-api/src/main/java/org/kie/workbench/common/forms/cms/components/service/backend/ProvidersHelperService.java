@@ -27,6 +27,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.kie.workbench.common.forms.cms.common.backend.services.BackendApplicationRuntime;
 import org.kie.workbench.common.forms.editor.service.shared.VFSFormFinderService;
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
@@ -48,15 +49,20 @@ public class ProvidersHelperService {
 
     private VFSFormFinderService formFinderService;
 
+    // Hardcoded only for POC TODO: remove it
+    private BackendApplicationRuntime applicationRuntime;
+
     @Inject
     public ProvidersHelperService(LibraryService libraryService,
                                   KieProjectService projectService,
                                   DataModelerService dataModelerService,
-                                  VFSFormFinderService formFinderService) {
+                                  VFSFormFinderService formFinderService,
+                                  BackendApplicationRuntime applicationRuntime) {
         this.libraryService = libraryService;
         this.projectService = projectService;
         this.dataModelerService = dataModelerService;
         this.formFinderService = formFinderService;
+        this.applicationRuntime = applicationRuntime;
     }
 
     public Collection<OrganizationalUnit> getOrganizationalUnits() {
@@ -85,6 +91,7 @@ public class ProvidersHelperService {
         Optional<KieProject> projectOptional = getProject(ouId, projectName);
 
         if(projectOptional.isPresent()) {
+            applicationRuntime.initRuntime(projectOptional.get());
             return dataModelerService.loadModel(projectOptional.get()).getDataObjects();
         }
 

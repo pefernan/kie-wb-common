@@ -17,24 +17,21 @@
 package org.kie.workbench.common.forms.cms.persistence.shared;
 
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.errai.bus.server.annotations.Remote;
 
 @Remote
 public interface PersistenceService {
 
-    PersistenceResponse createInstance(String type,
-                                       Map<String, Object> instance);
+    PersistenceResponse createInstance(PersistentModel instance);
 
-    PersistenceResponse saveInstance(String type,
-                                     int index,
-                                     Map<String, Object> instance);
+    PersistenceResponse saveInstance(PersistentModel instance);
 
-    List<Map<String, Object>> query(String type);
+    List<PersistentModel> query(String type);
 
-    Map<String, Object> getInstance(String type,
-                               int index);
+    PersistentModel getInstance(String type,
+                                String id);
 
-    PersistenceResponse deleteInstance(String type, int index);
+    PersistenceResponse deleteInstance(String type,
+                                       String id);
 }
