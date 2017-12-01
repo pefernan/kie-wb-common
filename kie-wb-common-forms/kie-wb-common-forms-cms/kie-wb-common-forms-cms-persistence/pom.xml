@@ -34,6 +34,7 @@
   <modules>
     <module>kie-wb-common-forms-cms-persistence-api</module>
     <module>kie-wb-common-forms-cms-persistence-in-memory</module>
+    <module>kie-wb-common-forms-cms-persistence-impl</module>
   </modules>
 
 

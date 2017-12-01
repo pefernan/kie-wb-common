@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.persistence.service;
+package org.kie.workbench.common.forms.cms.persistence.service.drools.units;
 
-import org.kie.api.runtime.KieContainer;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
+import org.kie.api.runtime.rule.DataSource;
+import org.kie.api.runtime.rule.RuleUnit;
 
-public interface TypePersistenceService {
+public interface PersistentRuleUnit<TYPE> extends RuleUnit {
 
-    void init(KieContainer kieContainer);
+    DataSource<TYPE> getDataSource();
 
-    PersistentInstance createInstance(PersistentInstance instance);
-
-    PersistentInstance saveInstance(PersistentInstance instance);
-
-    PersistentInstance getInstance(String id);
-
-    boolean deleteInstance(String id);
+    Class<TYPE> getModelType();
 }

@@ -22,7 +22,7 @@ import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class PersistentModel {
+public class PersistentInstance {
 
     private String id;
 
@@ -30,9 +30,9 @@ public class PersistentModel {
 
     private Map<String, Object> model;
 
-    public PersistentModel(@MapsTo("id") String id,
-                           @MapsTo("type") String type,
-                           @MapsTo("model") Map<String, Object> model) {
+    public PersistentInstance(@MapsTo("id") String id,
+                              @MapsTo("type") String type,
+                              @MapsTo("model") Map<String, Object> model) {
         this.id = id;
         this.type = type;
         this.model = model;

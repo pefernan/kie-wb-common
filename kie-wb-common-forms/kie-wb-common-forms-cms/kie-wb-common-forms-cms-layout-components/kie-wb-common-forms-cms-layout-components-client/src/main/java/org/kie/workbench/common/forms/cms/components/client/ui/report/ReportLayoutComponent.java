@@ -37,7 +37,7 @@ import org.kie.workbench.common.forms.cms.components.client.ui.settings.Settings
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.report.ReportSettings;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
@@ -81,9 +81,9 @@ public class ReportLayoutComponent extends AbstractFormsCMSLayoutComponent<Repor
 
                 originalContext = contextResponse;
 
-                persistenceService.call((RemoteCallback<List<PersistentModel>>) persistentModels -> {
+                persistenceService.call((RemoteCallback<List<PersistentInstance>>) persistentModels -> {
 
-                    List<Map<String, Object>> result =  persistentModels.stream().map(PersistentModel::getModel).collect(Collectors.toList());
+                    List<Map<String, Object>> result =  persistentModels.stream().map(PersistentInstance::getModel).collect(Collectors.toList());
                     result.forEach(instance -> {
 
                         MapModelRenderingContext tableContext = getTableContext(instance);

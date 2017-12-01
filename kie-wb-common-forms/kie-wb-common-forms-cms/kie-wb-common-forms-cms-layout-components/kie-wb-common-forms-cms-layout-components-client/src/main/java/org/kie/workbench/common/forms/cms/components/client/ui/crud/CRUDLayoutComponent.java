@@ -41,7 +41,7 @@ import org.kie.workbench.common.forms.cms.components.service.shared.RenderingCon
 import org.kie.workbench.common.forms.cms.components.shared.model.crud.CRUDSettings;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 import org.kie.workbench.common.forms.crud.client.component.CrudActionsHelper;
 import org.kie.workbench.common.forms.dynamic.client.helper.MapModelBindingHelper;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.multipleSubform.ColumnGeneratorManager;
@@ -59,7 +59,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
     private FormRenderingContext context;
     private CRUDLayoutComponentView view;
     private MapModelBindingHelper mapModelBindingHelper;
-    private List<PersistentModel> values;
+    private List<PersistentInstance> values;
     private List<BindableProxy<Map<String, Object>>> tableValues;
 
     @Inject
@@ -109,7 +109,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
                 if (formRenderingContext != null) {
                     this.context = formRenderingContext;
 
-                    persistenceService.call((RemoteCallback<List<PersistentModel>>) persistentModels -> {
+                    persistenceService.call((RemoteCallback<List<PersistentInstance>>) persistentModels -> {
                         values = persistentModels;
 
                         tableValues = values.stream().map(persistentModel -> convert(persistentModel.getModel())).collect(Collectors.toList());
@@ -234,7 +234,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
                                           Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
                                           refresh();
                                       }
-                                  }).createInstance(new PersistentModel(null, settings.getDataObject(), createContext.getModel()));
+                                  }).createInstance(new PersistentInstance(null, settings.getDataObject(), createContext.getModel()));
 
                               },
                               () -> {
@@ -249,7 +249,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
                 createContext.getAvailableForms().putAll(context.getAvailableForms());
                 createContext.setRootForm((FormDefinition) context.getAvailableForms().get(settings.getCreationForm()));
 
-                final PersistentModel editedModel = values.get(index);
+                final PersistentInstance editedModel = values.get(index);
 
                 createContext.setModel(editedModel.getModel());
 

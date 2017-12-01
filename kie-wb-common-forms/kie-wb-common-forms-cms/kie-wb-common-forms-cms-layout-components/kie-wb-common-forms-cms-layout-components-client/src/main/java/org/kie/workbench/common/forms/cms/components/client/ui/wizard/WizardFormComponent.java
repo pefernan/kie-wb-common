@@ -39,7 +39,7 @@ import org.kie.workbench.common.forms.cms.components.shared.model.wizard.WizardS
 import org.kie.workbench.common.forms.cms.components.shared.model.wizard.WizardStep;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 import org.kie.workbench.common.forms.model.FormDefinition;
@@ -107,7 +107,7 @@ public class WizardFormComponent extends AbstractFormsCMSLayoutComponent<WizardS
             } else {
                 Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
             }
-        }).createInstance(new PersistentModel(null, settings.getDataObject(), instance));
+        }).createInstance(new PersistentInstance(null, settings.getDataObject(), instance));
     }
 
     @Override

@@ -23,14 +23,14 @@ import org.jboss.errai.bus.server.annotations.Remote;
 @Remote
 public interface PersistenceService {
 
-    PersistenceResponse createInstance(PersistentModel instance);
+    PersistenceResponse createInstance(PersistentInstance instance);
 
-    PersistenceResponse saveInstance(PersistentModel instance);
+    PersistenceResponse saveInstance(PersistentInstance instance);
 
-    List<PersistentModel> query(String type);
+    List<PersistentInstance> query(String type);
 
-    PersistentModel getInstance(String type,
-                                String id);
+    PersistentInstance getInstance(String type,
+                                   String id);
 
     PersistenceResponse deleteInstance(String type,
                                        String id);

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -31,7 +30,7 @@ import org.kie.workbench.common.forms.cms.common.backend.services.BackendApplica
 import org.kie.workbench.common.forms.cms.persistence.service.impl.TypePersistenceServiceRegistry;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 import org.uberfire.commons.data.Pair;
 
 @Service
@@ -50,52 +49,46 @@ public class InMemoryPersistenceServiceImpl implements PersistenceService {
     }
 
     @Override
-    public PersistenceResponse createInstance(PersistentModel instance) {
+    public PersistenceResponse createInstance(PersistentInstance instance) {
         if(instance.getId() != null) {
             return saveInstance(instance);
         }
-        instance.setId(UUID.randomUUID().toString());
-        return getPersistenceService(instance.getType()).createInstance(instance);
+
+        instance = getPersistenceService(instance.getType()).createInstance(instance);
+
+        if(instance != null) {
+            return PersistenceResponse.SUCCESS;
+        }
+
+        return PersistenceResponse.ERROR;
     }
 
     @Override
-    public PersistenceResponse saveInstance(PersistentModel instance) {
+    public PersistenceResponse saveInstance(PersistentInstance instance) {
 
         if(instance.getId() == null) {
             return createInstance(instance);
         }
 
-        List<Pair<String, Map<String, Object>>> table = getTableForType(instance.getType());
+        instance = getPersistenceService(instance.getType()).saveInstance(instance);
 
-        Pair<String, Map<String, Object>> modelPair = table.stream().filter(pair->pair.getK1().equals(instance.getId())).findFirst().orElse(null);
-
-        if(modelPair == null) {
-            return PersistenceResponse.ERROR;
+        if(instance != null) {
+            return PersistenceResponse.SUCCESS;
         }
 
-        Pair newModelPair = new Pair(instance.getId(), instance.getModel());
-
-        table.set(table.indexOf(modelPair), newModelPair);
-
-        return PersistenceResponse.SUCCESS;
+        return PersistenceResponse.ERROR;
     }
 
     @Override
-    public PersistentModel getInstance(String type,
-                                       String id) {
+    public PersistentInstance getInstance(String type,
+                                          String id) {
 
-        Pair<String, Map<String, Object>> modelPair = getTableForType(type).stream().filter(pair -> pair.getK1().equals(id)).findFirst().orElse(null);
-
-        if(modelPair != null) {
-            return new PersistentModel(modelPair.getK1(), type, modelPair.getK2());
-        }
-
-        return null;
+        return getPersistenceService(type).getInstance(id);
     }
 
     @Override
-    public List<PersistentModel> query(String type) {
-        return getTableForType(type).stream().map(pair -> new PersistentModel(pair.getK1(), type, pair.getK2())).collect(Collectors.toList());
+    public List<PersistentInstance> query(String type) {
+        return getTableForType(type).stream().map(pair -> new PersistentInstance(pair.getK1(), type, pair.getK2())).collect(Collectors.toList());
     }
 
     @Override

@@ -37,7 +37,7 @@ import org.kie.workbench.common.forms.cms.components.service.shared.RenderingCon
 import org.kie.workbench.common.forms.cms.components.shared.model.objectCreation.ObjectCreationSettings;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistentModel;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 
@@ -109,8 +109,8 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
                                    Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
                                    initDisplayer();
                                }
-                           }).createInstance(new PersistentModel(null, settings.getDataObject(),
-                                                                     instance));
+                           }).createInstance(new PersistentInstance(null, settings.getDataObject(),
+                                                                    instance));
                        },
                        () -> {
                            initDisplayer();
