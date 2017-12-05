@@ -16,9 +16,15 @@
 
 package org.kie.workbench.common.forms.cms.persistence.shared;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
+public abstract class PersistenceResponse {
 
-@Portable
-public enum PersistenceResponse {
-    SUCCESS, ERROR
+    private OperationResult result;
+
+    protected PersistenceResponse(OperationResult result) {
+        this.result = result;
+    }
+
+    public OperationResult getResult() {
+        return result;
+    }
 }

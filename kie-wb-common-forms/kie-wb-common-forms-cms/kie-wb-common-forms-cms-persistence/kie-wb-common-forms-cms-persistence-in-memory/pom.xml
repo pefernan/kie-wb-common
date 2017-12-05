@@ -67,6 +67,12 @@
       <artifactId>kie-wb-common-forms-cms-persistence-api</artifactId>
     </dependency>
 
+
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-cms-persistence-backend</artifactId>
+    </dependency>
+
     <!-- Test -->
     <dependency>
       <groupId>org.mockito</groupId>

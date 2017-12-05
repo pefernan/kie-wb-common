@@ -37,7 +37,8 @@ import org.kie.workbench.common.forms.cms.components.client.ui.wizard.ui.WizardF
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.wizard.WizardSettings;
 import org.kie.workbench.common.forms.cms.components.shared.model.wizard.WizardStep;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.InstanceCreationResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.OperationResult;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
@@ -101,8 +102,8 @@ public class WizardFormComponent extends AbstractFormsCMSLayoutComponent<WizardS
     }
 
     private void persist(Map<String, Object> instance) {
-        persistenceService.call((RemoteCallback<PersistenceResponse>) persistenceResponse -> {
-            if(PersistenceResponse.SUCCESS.equals(persistenceResponse)) {
+        persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
+            if(OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
                 Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
             } else {
                 Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));

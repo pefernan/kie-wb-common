@@ -19,8 +19,8 @@ package org.kie.workbench.common.forms.cms.persistence.service.impl.types;
 import java.util.HashMap;
 import java.util.Map;
 
+import demo.invoices.Client;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.kie.workbench.common.forms.cms.persistence.service.fakeModel.Client;
 import org.kie.workbench.common.forms.cms.persistence.service.impl.TypeConverter;
 
 public class ClientTypeConverter extends TypeConverter<Client> {

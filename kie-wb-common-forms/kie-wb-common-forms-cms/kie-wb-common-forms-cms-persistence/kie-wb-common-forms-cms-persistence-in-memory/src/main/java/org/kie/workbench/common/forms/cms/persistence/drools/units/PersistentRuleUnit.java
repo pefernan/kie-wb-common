@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.persistence.shared;
+package org.kie.workbench.common.forms.cms.persistence.drools.units;
 
-import java.util.Collection;
+import java.util.Date;
 
-import org.jboss.errai.bus.server.annotations.Remote;
+import org.kie.api.runtime.rule.DataSource;
+import org.kie.api.runtime.rule.RuleUnit;
 
-@Remote
-public interface PersistenceService {
+public interface PersistentRuleUnit<TYPE> extends RuleUnit {
 
-    InstanceCreationResponse createInstance(PersistentInstance instance);
+    DataSource<TYPE> getDataSource();
 
-    InstanceEditionResponse saveInstance(PersistentInstance instance);
+    Class<TYPE> getModelType();
 
-    Collection<PersistentInstance> query(String type);
-
-    PersistentInstance getInstance(String type,
-                                   String id);
-
-    InstanceDeleteResponse deleteInstance(String type,
-                                   String id);
+    @Override
+    default Identity getUnitIdentity() {
+        return new Identity(getClass(),
+                            new Date());
+    }
 }

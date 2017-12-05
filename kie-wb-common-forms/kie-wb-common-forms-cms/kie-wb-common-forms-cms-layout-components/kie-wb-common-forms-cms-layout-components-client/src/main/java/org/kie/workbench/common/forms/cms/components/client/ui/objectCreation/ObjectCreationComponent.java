@@ -24,7 +24,9 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.databinding.client.BindableProxy;
@@ -35,7 +37,8 @@ import org.kie.workbench.common.forms.cms.components.client.ui.displayer.FormDis
 import org.kie.workbench.common.forms.cms.components.client.ui.settings.SettingsDisplayer;
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.objectCreation.ObjectCreationSettings;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.InstanceCreationResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.OperationResult;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
@@ -101,20 +104,26 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
                                instance = context.getModel();
                            }
 
-                           this.persistenceService.call((RemoteCallback<PersistenceResponse>) persistenceResponse -> {
-                               if(PersistenceResponse.SUCCESS.equals(persistenceResponse)) {
-                                   Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
-                                   initDisplayer();
-                               } else {
-                                   Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
-                                   initDisplayer();
-                               }
-                           }).createInstance(new PersistentInstance(null, settings.getDataObject(),
-                                                                    instance));
+                           this.persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
+                                                            if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
+                                                                Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                                                                initDisplayer();
+                                                            } else {
+                                                                handlePersistenceError();
+                                                            }
+                                                        },
+                                                        (ErrorCallback<Message>) (message, throwable) -> handlePersistenceError()).createInstance(new PersistentInstance(null, settings.getDataObject(),
+                                                                                                                                                                         instance));
                        },
                        () -> {
                            initDisplayer();
                        });
+    }
+
+    protected boolean handlePersistenceError() {
+        Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+        initDisplayer();
+        return false;
     }
 
     @Override

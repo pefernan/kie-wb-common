@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.persistence.shared;
+package org.kie.workbench.common.forms.cms.persistence.service;
 
 import java.util.Collection;
 
-import org.jboss.errai.bus.server.annotations.Remote;
+import org.kie.workbench.common.forms.cms.persistence.shared.InstanceCreationResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.InstanceDeleteResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.InstanceEditionResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.OperationResult;
+import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 
-@Remote
-public interface PersistenceService {
+public interface Storage {
 
     InstanceCreationResponse createInstance(PersistentInstance instance);
 
@@ -33,5 +36,5 @@ public interface PersistenceService {
                                    String id);
 
     InstanceDeleteResponse deleteInstance(String type,
-                                   String id);
+                                          String id);
 }

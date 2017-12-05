@@ -16,22 +16,25 @@
 
 package org.kie.workbench.common.forms.cms.persistence.shared;
 
-import java.util.Collection;
+import org.jboss.errai.common.client.api.annotations.MapsTo;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import org.jboss.errai.bus.server.annotations.Remote;
+@Portable
+public class InstanceCreationResponse extends PersistenceResponse {
 
-@Remote
-public interface PersistenceService {
+    private PersistentInstance instance;
 
-    InstanceCreationResponse createInstance(PersistentInstance instance);
+    public InstanceCreationResponse(@MapsTo("result") OperationResult result,
+                                    @MapsTo("instance") PersistentInstance instance) {
+        super(result);
+        this.instance = instance;
+    }
 
-    InstanceEditionResponse saveInstance(PersistentInstance instance);
+    public InstanceCreationResponse(@MapsTo("result") OperationResult result) {
+        super(result);
+    }
 
-    Collection<PersistentInstance> query(String type);
-
-    PersistentInstance getInstance(String type,
-                                   String id);
-
-    InstanceDeleteResponse deleteInstance(String type,
-                                   String id);
+    public PersistentInstance getInstance() {
+        return instance;
+    }
 }

@@ -29,7 +29,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.databinding.client.BindableProxy;
@@ -39,7 +41,10 @@ import org.kie.workbench.common.forms.cms.components.client.ui.AbstractFormsCMSL
 import org.kie.workbench.common.forms.cms.components.client.ui.settings.SettingsDisplayer;
 import org.kie.workbench.common.forms.cms.components.service.shared.RenderingContextGenerator;
 import org.kie.workbench.common.forms.cms.components.shared.model.crud.CRUDSettings;
-import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.InstanceCreationResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.InstanceDeleteResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.InstanceEditionResponse;
+import org.kie.workbench.common.forms.cms.persistence.shared.OperationResult;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 import org.kie.workbench.common.forms.crud.client.component.CrudActionsHelper;
@@ -129,14 +134,11 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
                                                   new ArrayList<>());
                                 }
                             }
-
-
                         };
 
                         view.showCRUD();
 
                         refreshCrud();
-
                     }).query(settings.getDataObject());
                 }
             }).generateContext(settings);
@@ -225,17 +227,19 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
 
                 view.showForm(createContext,
                               () -> {
-                                  persistenceService.call((RemoteCallback<PersistenceResponse>) persistenceResponse -> {
-                                      if(PersistenceResponse.SUCCESS.equals(persistenceResponse)) {
-                                          Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
-                                          tableValues.add(convert(createContext.getModel()));
-                                          refresh();
-                                      } else {
-                                          Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
-                                          refresh();
-                                      }
-                                  }).createInstance(new PersistentInstance(null, settings.getDataObject(), createContext.getModel()));
-
+                                  persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
+                                                              if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
+                                                                  Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                                                                  tableValues.add(convert(persistenceResponse.getInstance().getModel()));
+                                                                  values.add(persistenceResponse.getInstance());
+                                                                  refresh();
+                                                              } else {
+                                                                  handlePersistenceError();
+                                                              }
+                                                          },
+                                                          (ErrorCallback<Message>) (message, throwable) -> handlePersistenceError()).createInstance(new PersistentInstance(null,
+                                                                                                                                                                           settings.getDataObject(),
+                                                                                                                                                                           createContext.getModel()));
                               },
                               () -> {
                                   view.showCRUD();
@@ -245,30 +249,30 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
 
             @Override
             public void editInstance(final int index) {
-                MapModelRenderingContext createContext = new MapModelRenderingContext();
-                createContext.getAvailableForms().putAll(context.getAvailableForms());
-                createContext.setRootForm((FormDefinition) context.getAvailableForms().get(settings.getCreationForm()));
+                final MapModelRenderingContext editContext = new MapModelRenderingContext();
+                editContext.getAvailableForms().putAll(context.getAvailableForms());
+                editContext.setRootForm((FormDefinition) context.getAvailableForms().get(settings.getCreationForm()));
 
                 final PersistentInstance editedModel = values.get(index);
 
-                createContext.setModel(editedModel.getModel());
+                editContext.setModel(editedModel.getModel());
 
-                view.showForm(createContext,
+                view.showForm(editContext,
                               () -> {
-                                  editedModel.setModel(createContext.getModel());
-                                  persistenceService.call(new RemoteCallback<PersistenceResponse>() {
-                                      @Override
-                                      public void callback(PersistenceResponse persistenceResponse) {
-                                          if(PersistenceResponse.SUCCESS.equals(persistenceResponse)) {
-                                              Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectEditionComponentConfirmation));
-                                              tableValues.set(index, convert(createContext.getModel()));
-                                              refresh();
-                                          } else {
-                                              Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
-                                              refresh();
-                                          }
-                                      }
-                                  }).saveInstance(editedModel);
+                                  editedModel.setModel(editContext.getModel());
+                                  persistenceService.call((RemoteCallback<InstanceEditionResponse>) persistenceResponse -> {
+                                                              if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
+                                                                  Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectEditionComponentConfirmation));
+                                                                  tableValues.set(index,
+                                                                                  convert(persistenceResponse.getInstance().getModel()));
+                                                                  values.set(index,
+                                                                             persistenceResponse.getInstance());
+                                                                  refresh();
+                                                              } else {
+                                                                  handlePersistenceError();
+                                                              }
+                                                          },
+                                                          (ErrorCallback<Message>) (message, throwable) -> handlePersistenceError()).saveInstance(editedModel);
                               },
                               () -> {
                                   view.showCRUD();
@@ -277,12 +281,25 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
             }
 
             @Override
-            public void deleteInstance(int index) {
-                persistenceService.call().deleteInstance(settings.getDataObject(), values.get(index).getId());
-                values.remove(index);
-                tableValues.remove(index);
-                refreshCrud();
+            public void deleteInstance(final int index) {
+                persistenceService.call((RemoteCallback<InstanceDeleteResponse>) response -> {
+                                            if (OperationResult.SUCCESS.equals(response)) {
+                                                values.remove(index);
+                                                tableValues.remove(index);
+                                                refresh();
+                                            } else {
+                                                handlePersistenceError();
+                                            }
+                                        },
+                                        (ErrorCallback<Message>) (message, throwable) -> handlePersistenceError()).deleteInstance(settings.getDataObject(),
+                                                                                                                                  values.get(index).getId());
             }
         };
+    }
+
+    protected boolean handlePersistenceError() {
+        Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+        refresh();
+        return false;
     }
 }
