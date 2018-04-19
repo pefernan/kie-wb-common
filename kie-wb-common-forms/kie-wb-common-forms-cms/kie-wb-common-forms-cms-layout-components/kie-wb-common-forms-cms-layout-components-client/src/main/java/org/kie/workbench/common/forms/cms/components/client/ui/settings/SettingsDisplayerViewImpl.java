@@ -57,7 +57,7 @@ public class SettingsDisplayerViewImpl implements SettingsDisplayerView {
     }
 
     private void accept() {
-        if(formRenderer.isValid()) {
+        if (formRenderer.isValid()) {
             modal.hide();
             presenter.onAccept();
         }

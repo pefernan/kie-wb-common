@@ -30,7 +30,7 @@ public class InstanceEditionResponse extends PersistenceResponse {
         this.instance = instance;
     }
 
-    public InstanceEditionResponse(@MapsTo("result") OperationResult result) {
+    public InstanceEditionResponse(OperationResult result) {
         super(result);
     }
 

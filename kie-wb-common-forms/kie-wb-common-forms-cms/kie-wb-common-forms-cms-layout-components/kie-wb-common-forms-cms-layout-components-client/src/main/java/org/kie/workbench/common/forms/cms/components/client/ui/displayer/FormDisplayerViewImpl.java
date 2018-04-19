@@ -29,7 +29,8 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class FormDisplayerViewImpl implements IsElement, FormDisplayerView {
+public class FormDisplayerViewImpl implements IsElement,
+                                              FormDisplayerView {
 
     @Inject
     @DataField("container")

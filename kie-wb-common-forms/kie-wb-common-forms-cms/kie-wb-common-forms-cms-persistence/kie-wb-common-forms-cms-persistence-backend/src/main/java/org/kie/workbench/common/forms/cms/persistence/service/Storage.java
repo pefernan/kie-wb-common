@@ -18,10 +18,10 @@ package org.kie.workbench.common.forms.cms.persistence.service;
 
 import java.util.Collection;
 
+import org.kie.workbench.common.forms.cms.common.backend.services.DynamicModelMarshaller;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceCreationResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceDeleteResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceEditionResponse;
-import org.kie.workbench.common.forms.cms.persistence.shared.OperationResult;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 
 public interface Storage {
@@ -32,9 +32,9 @@ public interface Storage {
 
     Collection<PersistentInstance> query(String type);
 
-    PersistentInstance getInstance(String type,
-                                   String id);
+    PersistentInstance getInstance(String type, Object id);
 
-    InstanceDeleteResponse deleteInstance(String type,
-                                          String id);
+    InstanceDeleteResponse deleteInstance(String type, Object id);
+
+    void setMarshaller(DynamicModelMarshaller marshaller);
 }

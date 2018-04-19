@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2017 Red Hat, Inc. and/or its affiliates.
+  ~ Copyright 2018 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -19,21 +19,34 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>kie-wb-common-forms-cms</artifactId>
+    <artifactId>kie-wb-common-forms-cms-persistence</artifactId>
     <groupId>org.kie.workbench.forms</groupId>
     <version>7.8.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>kie-wb-common-forms-cms-layout-components</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>kie-wb-common-forms-cms-persistence-jpa</artifactId>
 
-  <name>Kie Workbench - Common - Forms - CMS - Layout Components</name>
-  <description>Kie Workbench - Common - Forms - CMS - Layout Components</description>
+  <name>Kie Workbench - Common - Forms - CMS - Persistence - JPA</name>
+  <description>Kie Workbench - Common - Forms - CMS - Persistence - JPA</description>
 
-  <modules>
-    <module>kie-wb-common-forms-cms-layout-components-client</module>
-    <module>kie-wb-common-forms-cms-layout-components-api</module>
-  </modules>
-  
+  <dependencies>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-cms-persistence-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-cms-persistence-backend</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.screens</groupId>
+      <artifactId>kie-wb-common-data-modeller-api</artifactId>
+    </dependency>
+  </dependencies>
 </project>

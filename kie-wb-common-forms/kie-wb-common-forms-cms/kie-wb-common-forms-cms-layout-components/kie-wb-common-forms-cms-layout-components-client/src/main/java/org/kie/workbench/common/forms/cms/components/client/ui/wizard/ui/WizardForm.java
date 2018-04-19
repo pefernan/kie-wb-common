@@ -101,7 +101,7 @@ public class WizardForm implements IsElement,
                         step.getTitle(),
                         newRenderer);
 
-        if(currentRenderer != null) {
+        if (currentRenderer != null) {
             renderers.destroy(currentRenderer);
         }
         currentRenderer = newRenderer;

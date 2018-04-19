@@ -29,7 +29,8 @@ import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContex
 import org.uberfire.mvp.Command;
 
 @Templated
-public class CRUDLayoutComponentViewImpl implements IsElement, CRUDLayoutComponentView {
+public class CRUDLayoutComponentViewImpl implements IsElement,
+                                                    CRUDLayoutComponentView {
 
     @Inject
     @DataField

@@ -21,11 +21,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.kie.workbench.common.forms.cms.common.backend.services.BackendApplicationRuntime;
 import org.kie.workbench.common.forms.editor.service.shared.VFSFormFinderService;
@@ -33,8 +33,8 @@ import org.kie.workbench.common.forms.model.FormDefinition;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
-import org.kie.workbench.common.services.shared.project.KieProject;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.kie.workbench.common.services.shared.project.KieModule;
+import org.kie.workbench.common.services.shared.project.KieModuleService;
 
 @Dependent
 public class ProvidersHelperService {
@@ -43,7 +43,7 @@ public class ProvidersHelperService {
 
     private LibraryService libraryService;
 
-    private KieProjectService projectService;
+    private KieModuleService moduleService;
 
     private DataModelerService dataModelerService;
 
@@ -54,12 +54,12 @@ public class ProvidersHelperService {
 
     @Inject
     public ProvidersHelperService(LibraryService libraryService,
-                                  KieProjectService projectService,
+                                  KieModuleService moduleService,
                                   DataModelerService dataModelerService,
                                   VFSFormFinderService formFinderService,
                                   BackendApplicationRuntime applicationRuntime) {
         this.libraryService = libraryService;
-        this.projectService = projectService;
+        this.moduleService = moduleService;
         this.dataModelerService = dataModelerService;
         this.formFinderService = formFinderService;
         this.applicationRuntime = applicationRuntime;
@@ -69,47 +69,49 @@ public class ProvidersHelperService {
         return libraryService.getOrganizationalUnits();
     }
 
-    public Collection<KieProject> getOrganizationalUnitProjects(String ouId) {
+    public Collection<Module> getOrganizationalUnitModules(String ouId) {
         Collection<OrganizationalUnit> ous = getOrganizationalUnits();
 
         Optional<OrganizationalUnit> ouOptional = ous.stream().filter(ou -> ou.getIdentifier().equals(ouId)).findFirst();
 
-        List<KieProject> projects = new ArrayList<>();
+        List<Module> modules = new ArrayList<>();
 
         if(ouOptional.isPresent()) {
             OrganizationalUnit ou = ouOptional.get();
-            ou.getRepositories().forEach(repository -> {
-                projects.addAll(projectService.getProjects(repository, MASTER).stream().map(project -> (KieProject)project).collect(Collectors.toList()));
-            });
+
+            ou.getRepositories().stream()
+                    .filter(repository -> repository.getBranch(MASTER).isPresent())
+                    .map(repository -> repository.getBranch(MASTER).get())
+                    .forEach(branch -> modules.addAll(moduleService.getAllModules(branch)));
         }
 
-        return projects;
+        return modules;
     }
 
-    public Collection<DataObject> getProjectDataObjects(String ouId, String projectName) {
+    public Collection<DataObject> getModuleDataObjects(String ouId, String projectName) {
 
-        Optional<KieProject> projectOptional = getProject(ouId, projectName);
+        Optional<Module> moduleOptional = getModule(ouId, projectName);
 
-        if(projectOptional.isPresent()) {
-            applicationRuntime.initRuntime(projectOptional.get());
-            return dataModelerService.loadModel(projectOptional.get()).getDataObjects();
+        if(moduleOptional.isPresent()) {
+            applicationRuntime.initRuntime(moduleOptional.get());
+            return dataModelerService.loadModel((KieModule) moduleOptional.get()).getDataObjects();
         }
 
         return Collections.EMPTY_LIST;
     }
 
     public Collection<FormDefinition> getFormsForDataObject(String ouId, String projectName, String dataObject) {
-        Optional<KieProject> projectOptional = getProject(ouId, projectName);
+        Optional<Module> moduleOptional = getModule(ouId, projectName);
 
-        if(projectOptional.isPresent()) {
-            return formFinderService.findFormsForType(dataObject, projectOptional.get().getRootPath());
+        if(moduleOptional.isPresent()) {
+            return formFinderService.findFormsForType(dataObject, moduleOptional.get().getRootPath());
         }
 
         return Collections.EMPTY_LIST;
     }
 
     public FormDefinition getFormById(String ouId, String projectName, String formId) {
-        Optional<KieProject> projectOptional = getProject(ouId, projectName);
+        Optional<Module> projectOptional = getModule(ouId, projectName);
 
         if(projectOptional.isPresent()) {
             return formFinderService.findFormById(formId, projectOptional.get().getRootPath());
@@ -118,9 +120,9 @@ public class ProvidersHelperService {
         return null;
     }
 
-    private Optional<KieProject> getProject(String ouId, String projectName) {
-        Collection<KieProject> projects = getOrganizationalUnitProjects(ouId);
+    private Optional<Module> getModule(String ouId, String moduleName) {
+        Collection<Module> projects = getOrganizationalUnitModules(ouId);
 
-        return projects.stream().filter(kieProject -> kieProject.getProjectName().equals(projectName)).findFirst();
+        return projects.stream().filter(kieProject -> kieProject.getModuleName().equals(moduleName)).findFirst();
     }
 }

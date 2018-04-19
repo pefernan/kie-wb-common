@@ -72,10 +72,10 @@ public class ReportLayoutComponent extends AbstractFormsCMSLayoutComponent<Repor
     @Override
     protected IsWidget getWidget() {
         view.clear();
-        if(checkSettings()) {
+        if (checkSettings()) {
             contextGenerator.call((RemoteCallback<FormRenderingContext>) contextResponse -> {
 
-                if(contextResponse == null) {
+                if (contextResponse == null) {
                     return;
                 }
 
@@ -83,7 +83,7 @@ public class ReportLayoutComponent extends AbstractFormsCMSLayoutComponent<Repor
 
                 persistenceService.call((RemoteCallback<List<PersistentInstance>>) persistentModels -> {
 
-                    List<Map<String, Object>> result =  persistentModels.stream().map(PersistentInstance::getModel).collect(Collectors.toList());
+                    List<Map<String, Object>> result = persistentModels.stream().map(PersistentInstance::getModel).collect(Collectors.toList());
                     result.forEach(instance -> {
 
                         MapModelRenderingContext tableContext = getTableContext(instance);

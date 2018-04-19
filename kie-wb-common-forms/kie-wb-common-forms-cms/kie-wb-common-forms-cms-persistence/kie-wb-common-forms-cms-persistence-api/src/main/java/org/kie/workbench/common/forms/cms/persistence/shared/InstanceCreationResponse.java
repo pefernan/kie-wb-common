@@ -30,7 +30,7 @@ public class InstanceCreationResponse extends PersistenceResponse {
         this.instance = instance;
     }
 
-    public InstanceCreationResponse(@MapsTo("result") OperationResult result) {
+    public InstanceCreationResponse(OperationResult result) {
         super(result);
     }
 

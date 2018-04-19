@@ -27,7 +27,6 @@ import org.kie.workbench.common.forms.cms.persistence.service.Storage;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceCreationResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceDeleteResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceEditionResponse;
-import org.kie.workbench.common.forms.cms.persistence.shared.OperationResult;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistenceService;
 import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 
@@ -40,16 +39,17 @@ public class PersistenceServiceImpl implements PersistenceService {
     private Storage storage;
 
     @Inject
-    public PersistenceServiceImpl(BackendApplicationRuntime applicationRuntime,
-                                  Storage storage) {
+    public PersistenceServiceImpl(BackendApplicationRuntime applicationRuntime, Storage storage) {
         this.applicationRuntime = applicationRuntime;
         this.storage = storage;
+        storage.setMarshaller(applicationRuntime.getModuleMarshaller());
     }
 
     @Override
     public InstanceCreationResponse createInstance(PersistentInstance instance) {
+
         if (instance.getId() != null) {
-            throw new IllegalArgumentException("Cannot create new \"" + instance.getType() + "\"instance, already has a persistence id (\""+ instance.getId() + "\").");
+            throw new IllegalArgumentException("Cannot create new \"" + instance.getType() + "\"instance, already has a persistence id (\"" + instance.getId() + "\").");
         }
 
         return storage.createInstance(instance);
@@ -66,11 +66,9 @@ public class PersistenceServiceImpl implements PersistenceService {
     }
 
     @Override
-    public PersistentInstance getInstance(String type,
-                                          String id) {
+    public PersistentInstance getInstance(String type, Object id) {
 
-        return storage.getInstance(type,
-                                   id);
+        return storage.getInstance(type, id);
     }
 
     @Override
@@ -79,10 +77,8 @@ public class PersistenceServiceImpl implements PersistenceService {
     }
 
     @Override
-    public InstanceDeleteResponse deleteInstance(String type,
-                                                 String id) {
+    public InstanceDeleteResponse deleteInstance(String type, Object id) {
 
-        return storage.deleteInstance(type,
-                                      id);
+        return storage.deleteInstance(type, id);
     }
 }

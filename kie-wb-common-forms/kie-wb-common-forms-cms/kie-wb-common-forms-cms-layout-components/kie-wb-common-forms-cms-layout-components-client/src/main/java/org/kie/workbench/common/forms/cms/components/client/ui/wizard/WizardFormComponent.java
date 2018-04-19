@@ -70,7 +70,7 @@ public class WizardFormComponent extends AbstractFormsCMSLayoutComponent<WizardS
     @Override
     protected IsWidget getWidget() {
 
-        if(checkSettings()) {
+        if (checkSettings()) {
             contextGenerator.call((RemoteCallback<FormRenderingContext>) context -> {
                 originalContext = context;
 
@@ -103,7 +103,7 @@ public class WizardFormComponent extends AbstractFormsCMSLayoutComponent<WizardS
 
     private void persist(Map<String, Object> instance) {
         persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
-            if(OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
+            if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
                 Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
             } else {
                 Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));

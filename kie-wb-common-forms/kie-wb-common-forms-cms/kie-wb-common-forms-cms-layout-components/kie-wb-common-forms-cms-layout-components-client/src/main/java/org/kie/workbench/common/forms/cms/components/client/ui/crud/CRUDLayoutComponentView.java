@@ -35,8 +35,5 @@ public interface CRUDLayoutComponentView extends UberElement<CRUDLayoutComponent
     interface Presenter {
 
         CrudActionsHelper getActionsHelper();
-
-
     }
-
 }

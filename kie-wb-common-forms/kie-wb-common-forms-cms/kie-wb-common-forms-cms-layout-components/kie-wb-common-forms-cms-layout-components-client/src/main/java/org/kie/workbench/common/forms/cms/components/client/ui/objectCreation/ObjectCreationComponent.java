@@ -98,8 +98,8 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
                        () -> {
                            Map<String, Object> instance;
 
-                           if(context.getModel() instanceof BindableProxy) {
-                               instance = ((BindableProxy<Map<String, Object>>)context.getModel()).deepUnwrap();
+                           if (context.getModel() instanceof BindableProxy) {
+                               instance = ((BindableProxy<Map<String, Object>>) context.getModel()).deepUnwrap();
                            } else {
                                instance = context.getModel();
                            }

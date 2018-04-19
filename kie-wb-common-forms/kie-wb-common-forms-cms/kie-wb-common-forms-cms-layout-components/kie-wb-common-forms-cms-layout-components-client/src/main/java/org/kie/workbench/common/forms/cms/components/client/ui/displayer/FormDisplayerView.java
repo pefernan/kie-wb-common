@@ -19,7 +19,7 @@ package org.kie.workbench.common.forms.cms.components.client.ui.displayer;
 import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
 import org.uberfire.client.mvp.UberElement;
 
-public interface FormDisplayerView extends UberElement<FormDisplayerView.Presenter>  {
+public interface FormDisplayerView extends UberElement<FormDisplayerView.Presenter> {
 
     interface Presenter {
 
@@ -28,7 +28,5 @@ public interface FormDisplayerView extends UberElement<FormDisplayerView.Present
         void onSubmit();
 
         void onCancel();
-
     }
-
 }

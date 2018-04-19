@@ -47,8 +47,8 @@ public class DOSelectorDataProvider implements SelectorDataProvider {
     public SelectorData getSelectorData(FormRenderingContext context) {
         BasicComponentSettings settings = (BasicComponentSettings) context.getModel();
 
-        Map<String, String> values = providersHelperService.getProjectDataObjects(settings.getOu(),
-                                                                                  settings.getProject()).stream().collect(Collectors.toMap(DataObject::getClassName,
+        Map<String, String> values = providersHelperService.getModuleDataObjects(settings.getOu(),
+                                                                                 settings.getProject()).stream().collect(Collectors.toMap(DataObject::getClassName,
                                                                                                                                            DataObject::getClassName));
 
         return new SelectorData(values,

@@ -16,15 +16,16 @@
 
 package org.kie.workbench.common.forms.cms.common.backend.services;
 
-import org.guvnor.common.services.project.model.Project;
-import org.kie.api.runtime.KieContainer;
+import org.guvnor.common.services.project.model.Module;
 import org.kie.workbench.common.forms.cms.common.shared.ApplicationRuntime;
 
 public interface BackendApplicationRuntime extends ApplicationRuntime {
 
-    void initRuntime(Project project);
+    void initRuntime(Module project);
 
-    KieContainer getAppKieContainer();
+    Module getDeployedModule();
 
-    boolean isInitialized();
+    DynamicModelMarshaller getModuleMarshaller();
+
+    ClassLoader getModuleClassLoader();
 }

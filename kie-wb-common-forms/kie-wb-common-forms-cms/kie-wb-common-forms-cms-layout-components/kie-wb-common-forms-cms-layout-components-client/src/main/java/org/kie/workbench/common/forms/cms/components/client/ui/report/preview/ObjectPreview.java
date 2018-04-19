@@ -34,6 +34,7 @@ public class ObjectPreview implements ObjectPreviewView.Presenter {
     private DynamicFormRenderer formRenderer;
 
     private TranslationService translationService;
+
     @Inject
     public ObjectPreview(ObjectPreviewView view,
                          DynamicFormRenderer formRenderer,

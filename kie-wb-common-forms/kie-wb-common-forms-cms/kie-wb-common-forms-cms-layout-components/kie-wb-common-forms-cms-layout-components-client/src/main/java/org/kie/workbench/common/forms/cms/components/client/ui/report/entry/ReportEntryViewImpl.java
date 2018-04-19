@@ -32,7 +32,8 @@ import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 
 @Templated
-public class ReportEntryViewImpl implements IsElement, ReportEntryView {
+public class ReportEntryViewImpl implements IsElement,
+                                            ReportEntryView {
 
     @Inject
     @DataField

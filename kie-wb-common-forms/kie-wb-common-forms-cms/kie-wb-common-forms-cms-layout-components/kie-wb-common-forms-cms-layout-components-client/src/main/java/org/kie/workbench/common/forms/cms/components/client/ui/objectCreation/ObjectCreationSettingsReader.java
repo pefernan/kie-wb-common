@@ -25,7 +25,7 @@ import org.kie.workbench.common.forms.cms.components.client.ui.SettingsReader;
 import org.kie.workbench.common.forms.cms.components.shared.model.objectCreation.ObjectCreationSettings;
 
 @Dependent
-public class ObjectCreationSettingsReader extends SettingsReader<ObjectCreationSettings>{
+public class ObjectCreationSettingsReader extends SettingsReader<ObjectCreationSettings> {
 
     public static String FORM = "form";
 

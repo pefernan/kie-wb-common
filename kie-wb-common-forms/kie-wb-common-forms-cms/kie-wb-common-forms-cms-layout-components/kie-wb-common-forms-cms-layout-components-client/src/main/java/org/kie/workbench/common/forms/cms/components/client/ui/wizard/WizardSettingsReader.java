@@ -56,17 +56,17 @@ public class WizardSettingsReader extends SettingsReader<WizardSettings> {
         settingsMap.entrySet().forEach(entry -> {
             String key = entry.getKey();
 
-            if(entry.getKey().startsWith(STEP)) {
+            if (entry.getKey().startsWith(STEP)) {
                 String sIndex = key.substring(key.indexOf(".") + 1, key.lastIndexOf("."));
 
                 WizardStep step = steps.get(Integer.decode(sIndex));
 
-                if(step == null) {
+                if (step == null) {
                     step = new WizardStep();
                     steps.put(Integer.decode(sIndex), step);
                 }
 
-                if(key.endsWith(STEP_FORM)) {
+                if (key.endsWith(STEP_FORM)) {
                     step.setForm(entry.getValue());
                 } else {
                     step.setTitle(entry.getValue());

@@ -26,7 +26,8 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.forms.cms.components.client.ui.report.entry.ReportEntry;
 
 @Templated
-public class ReportLayoutComponentViewImpl implements IsElement, ReportLayoutComponentView {
+public class ReportLayoutComponentViewImpl implements IsElement,
+                                                      ReportLayoutComponentView {
 
     @Inject
     @DataField

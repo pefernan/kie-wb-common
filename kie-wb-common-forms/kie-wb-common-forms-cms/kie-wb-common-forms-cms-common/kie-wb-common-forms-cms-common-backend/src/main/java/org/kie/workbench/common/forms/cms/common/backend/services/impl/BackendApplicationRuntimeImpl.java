@@ -20,62 +20,69 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.model.Project;
-import org.kie.api.KieBase;
-import org.kie.api.io.ResourceType;
-import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.rule.RuleUnitExecutor;
-import org.kie.internal.utils.KieHelper;
+import org.guvnor.common.services.project.model.Module;
 import org.kie.workbench.common.forms.cms.common.backend.services.BackendApplicationRuntime;
+import org.kie.workbench.common.forms.cms.common.backend.services.DynamicModelMarshaller;
 import org.kie.workbench.common.forms.cms.common.shared.events.FormsDeployedEvent;
 import org.kie.workbench.common.forms.cms.common.shared.services.FormService;
 import org.kie.workbench.common.forms.cms.common.shared.services.impl.AbstractApplicationRuntime;
 import org.kie.workbench.common.forms.editor.service.shared.VFSFormFinderService;
-import org.kie.workbench.common.services.backend.builder.core.BuildHelper;
+import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
+import org.kie.workbench.common.services.shared.project.KieModule;
 
 @ApplicationScoped
 public class BackendApplicationRuntimeImpl extends AbstractApplicationRuntime implements BackendApplicationRuntime {
 
-    private BuildHelper buildHelper;
-
-    private KieContainer appContainer;
+    private ModuleClassLoaderHelper classLoaderHelper;
 
     private VFSFormFinderService formFinderService;
 
+    private DynamicModelMarshaller marshaller;
+
+    private Module deployedModule;
+
     private Event<FormsDeployedEvent> formsDeployed;
 
+    private ClassLoader classLoader;
+
     @Inject
-    public BackendApplicationRuntimeImpl(FormService formService,
-                                         BuildHelper buildHelper,
+    public BackendApplicationRuntimeImpl(ModuleClassLoaderHelper classLoaderHelper,
+                                         FormService formService,
                                          VFSFormFinderService formFinderService,
+                                         DynamicModelMarshaller marshaller,
                                          Event<FormsDeployedEvent> formsDeployed) {
         super(formService);
-        this.buildHelper = buildHelper;
+        this.classLoaderHelper = classLoaderHelper;
         this.formFinderService = formFinderService;
+        this.marshaller = marshaller;
         this.formsDeployed = formsDeployed;
     }
 
     @Override
-    public void initRuntime(Project project) {
-        ((Runnable) () -> {
-            // Only to simulate the app deployment TODO: remove me!
-            BuildHelper.BuildResult result = buildHelper.build(project);
+    public void initRuntime(Module module) {
+        this.deployedModule = module;
 
-            appContainer = result.getBuilder().getKieContainer();
+        this.classLoader = classLoaderHelper.getModuleClassLoader((KieModule) module);
 
-            FormsDeployedEvent event = new FormsDeployedEvent(formFinderService.findAllForms(project.getRootPath()));
+        marshaller.init(this);
 
-            formsDeployed.fire(event);
-        }).run();
+        FormsDeployedEvent event = new FormsDeployedEvent(formFinderService.findAllForms(module.getRootPath()));
+
+        formsDeployed.fire(event);
     }
 
     @Override
-    public KieContainer getAppKieContainer() {
-        return appContainer;
+    public Module getDeployedModule() {
+        return deployedModule;
     }
 
     @Override
-    public boolean isInitialized() {
-        return appContainer != null;
+    public DynamicModelMarshaller getModuleMarshaller() {
+        return marshaller;
+    }
+
+    @Override
+    public ClassLoader getModuleClassLoader() {
+        return classLoader;
     }
 }

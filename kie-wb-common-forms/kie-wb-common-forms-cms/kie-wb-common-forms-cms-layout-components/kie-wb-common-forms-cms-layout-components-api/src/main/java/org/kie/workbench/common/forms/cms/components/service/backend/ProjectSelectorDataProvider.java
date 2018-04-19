@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.guvnor.common.services.project.model.Module;
 import org.kie.workbench.common.forms.cms.components.shared.model.BasicComponentSettings;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
-import org.kie.workbench.common.services.shared.project.KieProject;
 
 @Dependent
 public class ProjectSelectorDataProvider implements SelectorDataProvider {
@@ -49,12 +49,10 @@ public class ProjectSelectorDataProvider implements SelectorDataProvider {
 
         BasicComponentSettings settings = (BasicComponentSettings) context.getModel();
 
-        Collection<KieProject> projects = providersHelperService.getOrganizationalUnitProjects(settings.getOu());
+        Collection<Module> projects = providersHelperService.getOrganizationalUnitModules(settings.getOu());
 
-        Map<String, String> values = projects.stream().collect(Collectors.toMap(KieProject::getProjectName,
-                                                                                KieProject::getProjectName));
+        Map<String, String> values = projects.stream().collect(Collectors.toMap(Module::getModuleName, Module::getModuleName));
 
-        return new SelectorData(values,
-                                null);
+        return new SelectorData(values, null);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.components.client.ui.report.preview;
+package org.kie.workbench.common.forms.cms.common.backend.services;
 
-import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
-import org.uberfire.mvp.Command;
+import java.util.Map;
 
-public interface ObjectPreviewView {
+public interface DynamicModelMarshaller {
 
-    void init(Presenter presenter);
+    void init(BackendApplicationRuntime runtime);
 
-    void show();
+    Object newInstance(String type);
 
-    void hide();
+    Map<String, Object> marshall(Object object);
 
-    interface Presenter {
+    Object unMarshall(String type, Map<String, Object> marshalled);
 
-        DynamicFormRenderer getRenderer();
-
-        Command getAcceptCommand();
-
-        String getTitle();
-    }
+    Object unMarshall(Object original, Map<String, Object> marshalled);
 }

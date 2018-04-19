@@ -29,9 +29,7 @@ public interface PersistenceService {
 
     Collection<PersistentInstance> query(String type);
 
-    PersistentInstance getInstance(String type,
-                                   String id);
+    PersistentInstance getInstance(String type, Object id);
 
-    InstanceDeleteResponse deleteInstance(String type,
-                                   String id);
+    InstanceDeleteResponse deleteInstance(String type, Object id);
 }

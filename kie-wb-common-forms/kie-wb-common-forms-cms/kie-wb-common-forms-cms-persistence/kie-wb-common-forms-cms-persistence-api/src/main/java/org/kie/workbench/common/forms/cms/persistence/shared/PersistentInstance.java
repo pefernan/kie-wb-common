@@ -24,13 +24,13 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class PersistentInstance {
 
-    private String id;
+    private Object id;
 
     private String type;
 
     private Map<String, Object> model;
 
-    public PersistentInstance(@MapsTo("id") String id,
+    public PersistentInstance(@MapsTo("id") Object id,
                               @MapsTo("type") String type,
                               @MapsTo("model") Map<String, Object> model) {
         this.id = id;
@@ -38,11 +38,11 @@ public class PersistentInstance {
         this.model = model;
     }
 
-    public void setId(String id) {
+    public void setId(Object id) {
         this.id = id;
     }
 
-    public String getId() {
+    public Object getId() {
         return id;
     }
 
