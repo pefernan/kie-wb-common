@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.forms.cms.common.backend.services.BackendApplicationRuntime;
+import org.kie.workbench.common.forms.cms.common.backend.services.BackendPersistenceService;
 import org.kie.workbench.common.forms.cms.persistence.service.Storage;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceCreationResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceDeleteResponse;
@@ -32,17 +33,19 @@ import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 
 @Service
 @ApplicationScoped
-public class PersistenceServiceImpl implements PersistenceService {
-
-    private BackendApplicationRuntime applicationRuntime;
+public class PersistenceServiceImpl implements PersistenceService,
+                                               BackendPersistenceService {
 
     private Storage storage;
 
     @Inject
-    public PersistenceServiceImpl(BackendApplicationRuntime applicationRuntime, Storage storage) {
-        this.applicationRuntime = applicationRuntime;
+    public PersistenceServiceImpl(Storage storage) {
         this.storage = storage;
-        storage.setMarshaller(applicationRuntime.getModuleMarshaller());
+    }
+
+    @Override
+    public void init(BackendApplicationRuntime runtime) {
+        storage.init(runtime);
     }
 
     @Override

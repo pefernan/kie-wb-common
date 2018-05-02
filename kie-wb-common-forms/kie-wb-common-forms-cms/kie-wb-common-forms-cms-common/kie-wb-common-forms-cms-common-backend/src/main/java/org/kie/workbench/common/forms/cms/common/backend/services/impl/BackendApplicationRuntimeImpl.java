@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.Module;
 import org.kie.workbench.common.forms.cms.common.backend.services.BackendApplicationRuntime;
+import org.kie.workbench.common.forms.cms.common.backend.services.BackendPersistenceService;
 import org.kie.workbench.common.forms.cms.common.backend.services.DynamicModelMarshaller;
 import org.kie.workbench.common.forms.cms.common.shared.events.FormsDeployedEvent;
 import org.kie.workbench.common.forms.cms.common.shared.services.FormService;
@@ -45,16 +46,20 @@ public class BackendApplicationRuntimeImpl extends AbstractApplicationRuntime im
 
     private ClassLoader classLoader;
 
+    private BackendPersistenceService runtimePersistence;
+
     @Inject
     public BackendApplicationRuntimeImpl(ModuleClassLoaderHelper classLoaderHelper,
                                          FormService formService,
                                          VFSFormFinderService formFinderService,
                                          DynamicModelMarshaller marshaller,
+                                         BackendPersistenceService runtimePersistence,
                                          Event<FormsDeployedEvent> formsDeployed) {
         super(formService);
         this.classLoaderHelper = classLoaderHelper;
         this.formFinderService = formFinderService;
         this.marshaller = marshaller;
+        this.runtimePersistence = runtimePersistence;
         this.formsDeployed = formsDeployed;
     }
 
@@ -69,6 +74,8 @@ public class BackendApplicationRuntimeImpl extends AbstractApplicationRuntime im
         FormsDeployedEvent event = new FormsDeployedEvent(formFinderService.findAllForms(module.getRootPath()));
 
         formsDeployed.fire(event);
+
+        runtimePersistence.init(this);
     }
 
     @Override

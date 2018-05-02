@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.forms.cms.common.backend.services.DynamicModelMarshaller;
+import org.kie.workbench.common.forms.cms.common.backend.services.BackendApplicationRuntime;
 import org.kie.workbench.common.forms.cms.persistence.service.Storage;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceCreationResponse;
 import org.kie.workbench.common.forms.cms.persistence.shared.InstanceDeleteResponse;
@@ -35,20 +35,28 @@ import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 @Dependent
 public class JPAStorage implements Storage {
 
-    private DynamicModelMarshaller marshaller;
+    private BackendApplicationRuntime runtime;
+
     private Map<String, Map<Object, Object>> memory = new HashMap<>();
 
-    private PersistenceManager persistenceManager;
+    private JPAPersistenceManager persistenceManager;
 
     @Inject
-    public JPAStorage(PersistenceManager persistenceManager) {
+    public JPAStorage(JPAPersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
+    }
+
+    @Override
+    public void init(BackendApplicationRuntime runtime) {
+        this.runtime = runtime;
+
+        persistenceManager.init(runtime);
     }
 
     @Override
     public InstanceCreationResponse createInstance(PersistentInstance instance) {
 
-        Object bean = marshaller.unMarshall(instance.getType(), instance.getModel());
+        Object bean = runtime.getModuleMarshaller().unMarshall(instance.getType(), instance.getModel());
 
         persistenceManager.saveInstance(bean);
 
@@ -67,7 +75,7 @@ public class JPAStorage implements Storage {
     public InstanceEditionResponse saveInstance(PersistentInstance instance) {
         Object bean = get(instance.getType(), instance.getId());
 
-        marshaller.unMarshall(bean, instance.getModel());
+        runtime.getModuleMarshaller().unMarshall(bean, instance.getModel());
 
         return new InstanceEditionResponse(OperationResult.SUCCESS, instance);
     }
@@ -80,7 +88,7 @@ public class JPAStorage implements Storage {
     public Collection<PersistentInstance> query(String type) {
 
         return getDB(type).entrySet().stream()
-                .map(entry -> new PersistentInstance(entry.getKey(), type, marshaller.marshall(entry.getValue())))
+                .map(entry -> new PersistentInstance(entry.getKey(), type, runtime.getModuleMarshaller().marshall(entry.getValue())))
                 .collect(Collectors.toList());
     }
 
@@ -88,7 +96,7 @@ public class JPAStorage implements Storage {
     public PersistentInstance getInstance(String type, Object id) {
         Object bean = get(type, id);
 
-        return new PersistentInstance(id, type, marshaller.marshall(bean));
+        return new PersistentInstance(id, type, runtime.getModuleMarshaller().marshall(bean));
     }
 
     @Override
@@ -108,10 +116,5 @@ public class JPAStorage implements Storage {
         }
 
         return db;
-    }
-
-    @Override
-    public void setMarshaller(DynamicModelMarshaller marshaller) {
-        this.marshaller = marshaller;
     }
 }
