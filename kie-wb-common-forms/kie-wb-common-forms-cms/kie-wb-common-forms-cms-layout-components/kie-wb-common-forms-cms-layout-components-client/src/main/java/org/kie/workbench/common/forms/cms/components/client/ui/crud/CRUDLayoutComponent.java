@@ -226,21 +226,19 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
                 createContext.setModel(new HashMap<>());
 
                 view.showForm(createContext,
-                              () -> {
-                                  persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
-                                                              if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
-                                                                  Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
-                                                                  tableValues.add(convert(persistenceResponse.getInstance().getModel()));
-                                                                  values.add(persistenceResponse.getInstance());
-                                                                  refresh();
-                                                              } else {
-                                                                  handlePersistenceError();
-                                                              }
-                                                          },
-                                                          (ErrorCallback<Message>) (message, throwable) -> handlePersistenceError()).createInstance(new PersistentInstance(null,
-                                                                                                                                                                           settings.getDataObject(),
-                                                                                                                                                                           createContext.getModel()));
-                              },
+                              () -> persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
+                                                          if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
+                                                              Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                                                              tableValues.add(convert(persistenceResponse.getInstance().getModel()));
+                                                              values.add(persistenceResponse.getInstance());
+                                                              refresh();
+                                                          } else {
+                                                              handlePersistenceError();
+                                                          }
+                                                      },
+                                                        (ErrorCallback<Message>) (message, throwable) -> handlePersistenceError()).createInstance(new PersistentInstance(null,
+                                                                                                                                                                       settings.getDataObject(),
+                                                                                                                                                                       createContext.getModel())),
                               () -> {
                                   view.showCRUD();
                                   refreshCrud();
@@ -283,7 +281,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
             @Override
             public void deleteInstance(final int index) {
                 persistenceService.call((RemoteCallback<InstanceDeleteResponse>) response -> {
-                                            if (OperationResult.SUCCESS.equals(response)) {
+                                            if (OperationResult.SUCCESS.equals(response.getResult())) {
                                                 values.remove(index);
                                                 tableValues.remove(index);
                                                 refresh();

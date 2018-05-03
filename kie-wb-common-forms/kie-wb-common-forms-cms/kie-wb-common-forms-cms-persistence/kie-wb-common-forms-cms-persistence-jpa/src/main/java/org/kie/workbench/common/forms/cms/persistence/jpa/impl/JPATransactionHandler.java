@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.persistence.jpa;
+package org.kie.workbench.common.forms.cms.persistence.jpa.impl;
 
-import java.util.List;
+import javax.persistence.EntityManager;
 
-public interface JPAPersistenceManager {
+public interface JPATransactionHandler<TRANSACTION> {
 
-    Object createInstance(Object instance);
+    EntityManager getEntityManager();
 
-    Object persistInstance(Object instance);
+    TRANSACTION openTransaction() throws Exception;
 
-    Object deleteInstance(Object instance);
+    void commitTransaction(TRANSACTION transaction) throws Exception;
 
-    Object getInstanceById(Class<?> type, Object id);
-
-    List<Object> getAllInstances(Class<?> type);
-
-    void destroy();
+    void rollbackTransaction(TRANSACTION transaction) throws Exception;
 }

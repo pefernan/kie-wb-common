@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.persistence.jpa;
+package org.kie.workbench.common.forms.cms.persistence.jpa.impl;
 
-import java.util.List;
+public interface PersistenceCommand<RESULT> {
 
-public interface JPAPersistenceManager {
-
-    Object createInstance(Object instance);
-
-    Object persistInstance(Object instance);
-
-    Object deleteInstance(Object instance);
-
-    Object getInstanceById(Class<?> type, Object id);
-
-    List<Object> getAllInstances(Class<?> type);
-
-    void destroy();
+    RESULT execute(JPATransactionHandler transactionHandler);
 }

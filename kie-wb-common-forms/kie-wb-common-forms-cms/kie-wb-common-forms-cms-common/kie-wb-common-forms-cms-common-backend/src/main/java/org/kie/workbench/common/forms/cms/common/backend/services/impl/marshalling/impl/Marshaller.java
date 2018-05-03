@@ -61,7 +61,11 @@ public class Marshaller {
 
         final Object result = bean;
 
-        marshallers.stream().forEach(propertyMarshaller -> propertyMarshaller.unMarshal(result, marshaled.get(propertyMarshaller.getPropertyName())));
+        marshallers.stream().forEach(propertyMarshaller -> {
+            if(marshaled.containsKey(propertyMarshaller.getPropertyName())) {
+                propertyMarshaller.unMarshal(result, marshaled.get(propertyMarshaller.getPropertyName()));
+            }
+        });
 
         return result;
     }

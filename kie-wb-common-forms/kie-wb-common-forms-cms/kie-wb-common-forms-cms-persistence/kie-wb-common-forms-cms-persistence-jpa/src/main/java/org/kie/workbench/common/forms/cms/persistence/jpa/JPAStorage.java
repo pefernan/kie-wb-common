@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -39,18 +40,28 @@ public class JPAStorage implements Storage {
 
     private Map<String, Map<Object, Object>> memory = new HashMap<>();
 
+    private JPAPersisnteceManagerBuilder persisnteceManagerBuilder;
+
     private JPAPersistenceManager persistenceManager;
 
     @Inject
-    public JPAStorage(JPAPersistenceManager persistenceManager) {
-        this.persistenceManager = persistenceManager;
+    public JPAStorage(JPAPersisnteceManagerBuilder persisnteceManagerBuilder) {
+        this.persisnteceManagerBuilder = persisnteceManagerBuilder;
     }
 
     @Override
     public void init(BackendApplicationRuntime runtime) {
         this.runtime = runtime;
 
-        persistenceManager.init(runtime);
+        if(persistenceManager != null) {
+            persistenceManager.destroy();
+        }
+
+        persistenceManager = persisnteceManagerBuilder.getPersistenceManager(runtime);
+
+        if (persistenceManager == null) {
+            throw new IllegalStateException("Cannot initialize Persistence Manager");
+        }
     }
 
     @Override
@@ -58,50 +69,59 @@ public class JPAStorage implements Storage {
 
         Object bean = runtime.getModuleMarshaller().unMarshall(instance.getType(), instance.getModel());
 
-        persistenceManager.saveInstance(bean);
+        persistenceManager.createInstance(bean);
 
-        Map<Object, Object> db = getDB(instance.getType());
+        Map<String, Object> marshaled = runtime.getModuleMarshaller().marshall(bean);
 
-        int id = db.size();
-
-        db.put(id, bean);
-
-        instance.setId(id);
+        instance = new PersistentInstance(marshaled.get("id"), bean.getClass().getName(), marshaled);
 
         return new InstanceCreationResponse(OperationResult.SUCCESS, instance);
     }
 
     @Override
     public InstanceEditionResponse saveInstance(PersistentInstance instance) {
-        Object bean = get(instance.getType(), instance.getId());
+        Class<?> type = getClassForType(instance.getType());
+
+        Object bean = persistenceManager.getInstanceById(type, instance.getId());
 
         runtime.getModuleMarshaller().unMarshall(bean, instance.getModel());
+
+        persistenceManager.persistInstance(bean);
 
         return new InstanceEditionResponse(OperationResult.SUCCESS, instance);
     }
 
-    private Object get(String type, Object id) {
-        return getDB(type).get(id);
-    }
-
     @Override
     public Collection<PersistentInstance> query(String type) {
+        Class<?> clazz = getClassForType(type);
 
-        return getDB(type).entrySet().stream()
-                .map(entry -> new PersistentInstance(entry.getKey(), type, runtime.getModuleMarshaller().marshall(entry.getValue())))
+        return persistenceManager.getAllInstances(clazz).stream()
+                .map(this::marshall)
+                .map(marshaled -> new PersistentInstance(marshaled.get("id"), type, marshaled))
                 .collect(Collectors.toList());
     }
 
     @Override
     public PersistentInstance getInstance(String type, Object id) {
-        Object bean = get(type, id);
+        Class<?> clazz = getClassForType(type);
 
-        return new PersistentInstance(id, type, runtime.getModuleMarshaller().marshall(bean));
+        Object bean = persistenceManager.getInstanceById(clazz, id);
+
+        return new PersistentInstance(id, type, marshall(bean));
+    }
+
+    private Map<String, Object> marshall(Object bean) {
+        return runtime.getModuleMarshaller().marshall(bean);
     }
 
     @Override
     public InstanceDeleteResponse deleteInstance(String type, Object id) {
-        getDB(type).remove(id);
+
+        Class<?> clazz = getClassForType(type);
+
+        Object bean = persistenceManager.getInstanceById(clazz, id);
+
+        persistenceManager.deleteInstance(bean);
 
         return new InstanceDeleteResponse(OperationResult.SUCCESS);
     }
@@ -116,5 +136,20 @@ public class JPAStorage implements Storage {
         }
 
         return db;
+    }
+
+    private Class<?> getClassForType(String type) {
+        try {
+            return runtime.getModuleClassLoader().loadClass(type);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Cannot find class '" + type + "'", e);
+        }
+    }
+
+    @PreDestroy
+    public void destroy() {
+        if (persistenceManager != null) {
+            persistenceManager.destroy();
+        }
     }
 }

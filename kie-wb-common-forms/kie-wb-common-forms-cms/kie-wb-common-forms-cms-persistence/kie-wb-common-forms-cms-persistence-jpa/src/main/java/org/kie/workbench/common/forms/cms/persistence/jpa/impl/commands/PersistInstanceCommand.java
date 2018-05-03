@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.cms.persistence.jpa;
+package org.kie.workbench.common.forms.cms.persistence.jpa.impl.commands;
 
-import java.util.List;
+import org.kie.workbench.common.forms.cms.persistence.jpa.impl.JPATransactionHandler;
 
-public interface JPAPersistenceManager {
+public class PersistInstanceCommand extends AbstractPersistenceCommand<Object> {
 
-    Object createInstance(Object instance);
+    private Object instance;
 
-    Object persistInstance(Object instance);
+    public PersistInstanceCommand(Object instance) {
+        this.instance = instance;
+    }
 
-    Object deleteInstance(Object instance);
+    @Override
+    protected Object doExecute(JPATransactionHandler transactionHandler) {
 
-    Object getInstanceById(Class<?> type, Object id);
+        transactionHandler.getEntityManager().persist(instance);
 
-    List<Object> getAllInstances(Class<?> type);
-
-    void destroy();
+        return instance;
+    }
 }
