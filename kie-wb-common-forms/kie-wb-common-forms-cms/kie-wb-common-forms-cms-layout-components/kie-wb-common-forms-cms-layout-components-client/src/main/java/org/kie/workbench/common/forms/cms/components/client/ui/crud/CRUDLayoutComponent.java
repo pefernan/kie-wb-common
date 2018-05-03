@@ -25,10 +25,11 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
+import org.gwtbootstrap3.extras.notify.client.constants.NotifyType;
+import org.gwtbootstrap3.extras.notify.client.ui.Notify;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -227,18 +228,18 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
 
                 view.showForm(createContext,
                               () -> persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
-                                                          if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
-                                                              Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
-                                                              tableValues.add(convert(persistenceResponse.getInstance().getModel()));
-                                                              values.add(persistenceResponse.getInstance());
-                                                              refresh();
-                                                          } else {
-                                                              handlePersistenceError();
-                                                          }
-                                                      },
-                                                        (ErrorCallback<Message>) (message, throwable) -> handlePersistenceError()).createInstance(new PersistentInstance(null,
-                                                                                                                                                                       settings.getDataObject(),
-                                                                                                                                                                       createContext.getModel())),
+                                                                if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
+                                                                    Notify.notify(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                                                                    tableValues.add(convert(persistenceResponse.getInstance().getModel()));
+                                                                    values.add(persistenceResponse.getInstance());
+                                                                    refresh();
+                                                                } else {
+                                                                    handlePersistenceError();
+                                                                }
+                                                            },
+                                                            (ErrorCallback<Message>) (message, throwable) -> handlePersistenceError()).createInstance(new PersistentInstance(null,
+                                                                                                                                                                             settings.getDataObject(),
+                                                                                                                                                                             createContext.getModel())),
                               () -> {
                                   view.showCRUD();
                                   refreshCrud();
@@ -260,7 +261,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
                                   editedModel.setModel(editContext.getModel());
                                   persistenceService.call((RemoteCallback<InstanceEditionResponse>) persistenceResponse -> {
                                                               if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
-                                                                  Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectEditionComponentConfirmation));
+                                                                  Notify.notify(translationService.getTranslation(CMSComponentsConstants.ObjectEditionComponentConfirmation));
                                                                   tableValues.set(index,
                                                                                   convert(persistenceResponse.getInstance().getModel()));
                                                                   values.set(index,
@@ -296,7 +297,7 @@ public class CRUDLayoutComponent extends AbstractFormsCMSLayoutComponent<CRUDSet
     }
 
     protected boolean handlePersistenceError() {
-        Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+        Notify.notify(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage), NotifyType.WARNING);
         refresh();
         return false;
     }

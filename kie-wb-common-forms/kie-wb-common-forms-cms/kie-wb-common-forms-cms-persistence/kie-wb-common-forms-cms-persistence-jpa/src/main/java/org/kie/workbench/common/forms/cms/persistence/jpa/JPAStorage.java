@@ -17,7 +17,6 @@
 package org.kie.workbench.common.forms.cms.persistence.jpa;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -36,9 +35,9 @@ import org.kie.workbench.common.forms.cms.persistence.shared.PersistentInstance;
 @Dependent
 public class JPAStorage implements Storage {
 
-    private BackendApplicationRuntime runtime;
+    private static final String ID_PROPERTY = "id";
 
-    private Map<String, Map<Object, Object>> memory = new HashMap<>();
+    private BackendApplicationRuntime runtime;
 
     private JPAPersisnteceManagerBuilder persisnteceManagerBuilder;
 
@@ -69,11 +68,11 @@ public class JPAStorage implements Storage {
 
         Object bean = runtime.getModuleMarshaller().unMarshall(instance.getType(), instance.getModel());
 
-        persistenceManager.createInstance(bean);
+        bean = persistenceManager.createInstance(bean);
 
         Map<String, Object> marshaled = runtime.getModuleMarshaller().marshall(bean);
 
-        instance = new PersistentInstance(marshaled.get("id"), bean.getClass().getName(), marshaled);
+        instance = new PersistentInstance(marshaled.get(ID_PROPERTY), bean.getClass().getName(), marshaled);
 
         return new InstanceCreationResponse(OperationResult.SUCCESS, instance);
     }
@@ -97,7 +96,7 @@ public class JPAStorage implements Storage {
 
         return persistenceManager.getAllInstances(clazz).stream()
                 .map(this::marshall)
-                .map(marshaled -> new PersistentInstance(marshaled.get("id"), type, marshaled))
+                .map(marshaled -> new PersistentInstance(marshaled.get(ID_PROPERTY), type, marshaled))
                 .collect(Collectors.toList());
     }
 
@@ -124,18 +123,6 @@ public class JPAStorage implements Storage {
         persistenceManager.deleteInstance(bean);
 
         return new InstanceDeleteResponse(OperationResult.SUCCESS);
-    }
-
-    private Map<Object, Object> getDB(String type) {
-        Map<Object, Object> db = memory.get(type);
-
-        if (db == null) {
-            db = new HashMap<>();
-
-            memory.put(type, db);
-        }
-
-        return db;
     }
 
     private Class<?> getClassForType(String type) {

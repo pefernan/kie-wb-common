@@ -22,8 +22,9 @@ import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.gwtbootstrap3.extras.notify.client.constants.NotifyType;
+import org.gwtbootstrap3.extras.notify.client.ui.Notify;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -106,7 +107,7 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
 
                            this.persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
                                                             if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
-                                                                Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                                                                Notify.notify(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
                                                                 initDisplayer();
                                                             } else {
                                                                 handlePersistenceError();
@@ -121,7 +122,7 @@ public class ObjectCreationComponent extends AbstractFormsCMSLayoutComponent<Obj
     }
 
     protected boolean handlePersistenceError() {
-        Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+        Notify.notify(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage), NotifyType.WARNING);
         initDisplayer();
         return false;
     }

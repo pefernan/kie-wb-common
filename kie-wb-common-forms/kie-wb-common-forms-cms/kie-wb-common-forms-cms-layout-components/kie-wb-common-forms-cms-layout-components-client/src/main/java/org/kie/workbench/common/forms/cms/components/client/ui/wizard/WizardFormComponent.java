@@ -23,8 +23,9 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.gwtbootstrap3.extras.notify.client.constants.NotifyType;
+import org.gwtbootstrap3.extras.notify.client.ui.Notify;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
@@ -104,9 +105,9 @@ public class WizardFormComponent extends AbstractFormsCMSLayoutComponent<WizardS
     private void persist(Map<String, Object> instance) {
         persistenceService.call((RemoteCallback<InstanceCreationResponse>) persistenceResponse -> {
             if (OperationResult.SUCCESS.equals(persistenceResponse.getResult())) {
-                Window.alert(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
+                Notify.notify(translationService.getTranslation(CMSComponentsConstants.ObjectCreationComponentConfirmation));
             } else {
-                Window.alert(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage));
+                Notify.notify(translationService.getTranslation(CMSComponentsConstants.PersistenceErrorMessage), NotifyType.WARNING);
             }
         }).createInstance(new PersistentInstance(null, settings.getDataObject(), instance));
     }
