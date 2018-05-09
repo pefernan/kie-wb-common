@@ -48,6 +48,8 @@ public class BackendApplicationRuntimeImpl extends AbstractApplicationRuntime im
 
     private BackendPersistenceService runtimePersistence;
 
+    private boolean initialized = false;
+
     @Inject
     public BackendApplicationRuntimeImpl(ModuleClassLoaderHelper classLoaderHelper,
                                          FormService formService,
@@ -65,6 +67,9 @@ public class BackendApplicationRuntimeImpl extends AbstractApplicationRuntime im
 
     @Override
     public void initRuntime(Module module) {
+        if(initialized) {
+            return;
+        }
         this.deployedModule = module;
 
         this.classLoader = classLoaderHelper.getModuleClassLoader((KieModule) module);
@@ -76,6 +81,8 @@ public class BackendApplicationRuntimeImpl extends AbstractApplicationRuntime im
         formsDeployed.fire(event);
 
         runtimePersistence.init(this);
+
+        initialized = true;
     }
 
     @Override
@@ -86,6 +93,11 @@ public class BackendApplicationRuntimeImpl extends AbstractApplicationRuntime im
     @Override
     public DynamicModelMarshaller getModuleMarshaller() {
         return marshaller;
+    }
+
+    @Override
+    public boolean isInitialized() {
+        return initialized;
     }
 
     @Override

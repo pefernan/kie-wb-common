@@ -28,4 +28,6 @@ public interface BackendApplicationRuntime extends ApplicationRuntime {
     DynamicModelMarshaller getModuleMarshaller();
 
     ClassLoader getModuleClassLoader();
+
+    boolean isInitialized();
 }

@@ -111,6 +111,10 @@ public class ProvidersHelperService {
     }
 
     public FormDefinition getFormById(String ouId, String projectName, String formId) {
+        if(applicationRuntime.isInitialized()) {
+            return applicationRuntime.getFormService().getFormById(formId);
+        }
+
         Optional<Module> projectOptional = getModule(ouId, projectName);
 
         if(projectOptional.isPresent()) {
@@ -124,5 +128,10 @@ public class ProvidersHelperService {
         Collection<Module> projects = getOrganizationalUnitModules(ouId);
 
         return projects.stream().filter(kieProject -> kieProject.getModuleName().equals(moduleName)).findFirst();
+    }
+
+    // TODO: remove
+    public BackendApplicationRuntime getApplicationRuntime() {
+        return applicationRuntime;
     }
 }
