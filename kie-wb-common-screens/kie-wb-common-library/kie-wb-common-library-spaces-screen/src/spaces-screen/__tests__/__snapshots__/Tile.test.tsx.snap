@@ -8,6 +8,7 @@ exports[`snapshot of tile should match snapshot 1`] = `
     <div
       className="card-pf card-pf-view card-pf-view-select card-pf-view-single-select"
       onClick={[Function]}
+      title="OrganizationalUnitDeletedCannotBeOpened"
     >
       <div
         className="card-pf-body"
