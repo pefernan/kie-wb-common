@@ -15,22 +15,8 @@
  */
 package org.kie.workbench.common.stunner.core.command;
 
-public interface Command<T, V> {
+import org.uberfire.collaboration.store.CollaborationCommand;
 
-    /**
-     * Check whether the command operation is allowed.
-     * Does not perform any update or mutation.
-     */
-    CommandResult<V> allow(final T context);
+public interface Command<T, V> extends CollaborationCommand<T, V, CommandResult<V>> {
 
-    /**
-     * Executes the command operation.
-     * Does perform some update or mutation.
-     */
-    CommandResult<V> execute(final T context);
-
-    /**
-     * Undo the changes done by this command execution.
-     */
-    CommandResult<V> undo(final T context);
 }

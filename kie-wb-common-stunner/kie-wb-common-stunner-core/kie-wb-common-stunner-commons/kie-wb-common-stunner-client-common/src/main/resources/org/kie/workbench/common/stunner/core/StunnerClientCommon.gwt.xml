@@ -19,6 +19,7 @@
 
 <module>
 
+  <inherits name="org.uberfire.collaboration.UberfireCollaborationClient"/>
   <inherits name='com.google.gwt.user.User'/>
   <inherits name="com.google.gwt.logging.Logging"/>
   <inherits name="org.kie.workbench.common.stunner.core.StunnerClientApi"/>

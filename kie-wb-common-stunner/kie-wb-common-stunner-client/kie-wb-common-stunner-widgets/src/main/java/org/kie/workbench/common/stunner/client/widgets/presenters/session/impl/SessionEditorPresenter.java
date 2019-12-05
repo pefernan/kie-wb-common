@@ -37,19 +37,25 @@ import org.kie.workbench.common.stunner.client.widgets.toolbar.Toolbar;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.impl.EditorToolbar;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.command.collaboration.StunnerCollaborationCommandFactory;
 import org.kie.workbench.common.stunner.core.client.canvas.event.AbstractCanvasHandlerEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasFocusedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasLostFocusEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandUndoneEvent;
+import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMaximizedEvent;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMinimizedEvent;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDiagramOpenedEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.InstanceUtils;
+import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.uberfire.collaboration.client.service.CollaborationSessionManager;
+import org.uberfire.collaboration.session.CollaborationCommandExecutor;
+import org.uberfire.collaboration.store.CollaborationCommand;
 
 /**
  * A generic session's presenter instance for authoring purposes.
@@ -70,6 +76,9 @@ public class SessionEditorPresenter<S extends EditorSession>
     private final SessionEditorImpl<S> editor;
     private final SessionCardinalityStateHandler cardinalityStateHandler;
     private final ManagedInstance<EditorToolbar> toolbars;
+
+    @Inject
+    private CollaborationSessionManager collaborationSessionManager;
 
     @Inject
     @SuppressWarnings("unchecked")
@@ -110,6 +119,17 @@ public class SessionEditorPresenter<S extends EditorSession>
     protected void onSessionOpened(final S session) {
         super.onSessionOpened(session);
         cardinalityStateHandler.bind(session);
+        collaborationSessionManager.init(session.getSessionUUID(), new StunnerCollaborationCommandFactory(), new CollaborationCommandExecutor() {
+            @Override
+            public void execute(CollaborationCommand command) {
+                session.getCommandManager().execute(session.getCanvasHandler(), (Command<AbstractCanvasHandler, CanvasViolation>) command);
+            }
+
+            @Override
+            public void undo(CollaborationCommand command) {
+
+            }
+        });
         sessionDiagramOpenedEvent.fire(new SessionDiagramOpenedEvent(session));
     }
 

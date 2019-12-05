@@ -17,13 +17,12 @@
 package org.kie.workbench.common.stunner.client.lienzo.canvas.controls;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -61,9 +60,10 @@ import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseExitEv
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseExitHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 import org.kie.workbench.common.stunner.core.client.util.ShapeUtils;
-import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.command.collaboration.context.CompositeCommandInitializationContext;
+import org.kie.workbench.common.stunner.core.command.collaboration.context.UpdateElementPositionCommandInitializationContext;
+import org.kie.workbench.common.stunner.core.command.impl.CommandResultImpl;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -72,6 +72,7 @@ import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
+import org.uberfire.collaboration.client.service.CollaborationSessionManager;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
@@ -93,6 +94,9 @@ public class LocationControlImpl
     private CommandManagerProvider<AbstractCanvasHandler> commandManagerProvider;
     private final Collection<String> selectedIDs = new LinkedList<>();
     private final Event<CanvasSelectionEvent> selectionEvent;
+
+    @Inject
+    private CollaborationSessionManager collaborationSessionManager;
 
     protected LocationControlImpl() {
         this(null,
@@ -262,6 +266,14 @@ public class LocationControlImpl
                                                        "does not match the locations provided.");
         }
 
+        CompositeCommandInitializationContext context = new CompositeCommandInitializationContext(false);
+
+        for (int i = 0; i < elements.length; i++) {
+            context.addCommand(new UpdateElementPositionCommandInitializationContext((Node<View<?>, Edge>) elements[i], locations[i]));
+        }
+
+        collaborationSessionManager.newCommand(context);
+/*
         final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> builder =
                 new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
                         .forward();
@@ -281,9 +293,9 @@ public class LocationControlImpl
                 List<String> uuids = Arrays.stream(elements).map(Element::getUUID).collect(Collectors.toList());
                 shapeLocationsChangedEvent.fire(new ShapeLocationsChangedEvent(uuids, canvasHandler));
             }
-        }
+        }*/
 
-        return result;
+        return new CommandResultImpl(CommandResult.Type.INFO, Collections.emptyList());
     }
 
     @Override

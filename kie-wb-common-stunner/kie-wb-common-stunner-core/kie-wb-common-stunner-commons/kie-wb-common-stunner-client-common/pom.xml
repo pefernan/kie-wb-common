@@ -36,6 +36,11 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-collaboration-client</artifactId>
+    </dependency>
+
     <!-- Stunner. -->
 
     <dependency>
