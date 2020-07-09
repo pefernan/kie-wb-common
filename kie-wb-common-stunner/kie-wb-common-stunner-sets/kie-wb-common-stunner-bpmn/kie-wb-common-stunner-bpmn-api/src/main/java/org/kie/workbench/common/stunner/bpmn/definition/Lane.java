@@ -57,6 +57,9 @@ public class Lane implements BPMNViewDefinition {
     @Category
     public static final transient String category = BPMNCategories.CONTAINERS;
 
+    @FormField
+    private String myName;
+
     @PropertySet
     @FormField
     @Valid
@@ -71,6 +74,14 @@ public class Lane implements BPMNViewDefinition {
 
     @PropertySet
     protected RectangleDimensionsSet dimensionsSet;
+
+    public String getMyName() {
+        return myName;
+    }
+
+    public void setMyName(String myName) {
+        this.myName = myName;
+    }
 
     @Labels
     private final Set<String> labels = new Sets.Builder<String>()
